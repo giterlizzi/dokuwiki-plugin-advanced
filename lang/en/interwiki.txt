@@ -1,0 +1,33 @@
+==== InterWiki Links ====
+
+The original idea of InterWiki was to have one large distributed Wiki over the whole Internet. Today its more of an easy way to link from one wiki to another by having some simple link syntax to accomplish so.
+
+In DokuWiki this is done by prefixing Wiki pagenames with a shortcut separated by a ''>'' character (eg. ''<nowiki>[[wp>InterWiki]]</nowiki>'').
+
+The format of the interwiki config file is:
+
+  <shortcut>      <url to wiki>
+
+The shortcut is the one you will be able to use in the link later. In the URL you can use some placeholders to be more flexible in linking. If no placeholder is given the [[phpfn>rawurlencode|URL-encoded]] wikiname will be appended to the URL. These placeholders are available:
+
+^ Placeholder  ^  Replaced by                                                                          ^
+| {URL}        | URL-encoded wikiname (the part which is appended to the URL in interwiki.local.conf)  |
+| {NAME}       | wikiname without any encoding                                                         |
+| {SCHEME}     | scheme part if an URL was given as wikiname                                           |
+| {HOST}       | host part if an URL was given as wikiname                                             |
+| {PORT}       | port part if an URL was given as wikiname                                             |
+| {PATH}       | path part if an URL was given as wikiname                                             |
+| {QUERY}      | query part if an URL was given as wikiname                                            |
+
+If no placeholder is defined the urlencoded name is appended to the URL.
+
+=== Example of interwiki.conf ===
+
+<code>
+wp        https://en.wikipedia.org/wiki/{NAME}
+doku      https://www.dokuwiki.org/
+user      :user:{NAME}
+</code>
+
+=== See also ===
+  * [[doku>interwiki]]

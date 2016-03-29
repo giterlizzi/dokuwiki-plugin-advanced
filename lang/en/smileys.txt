@@ -1,0 +1,12 @@
+==== Smiles ====
+
+DokuWiki can convert text smileys to their graphically equivalent. The default smileys images are stored in the ''lib/images/smileys/'' directory and configured in the ''conf/smileys.conf'' file. The local and upgrade-safe directory of smiles images are stored in ''lib/images/smileys/local'' directory and configured in the ''conf/smiles.local.conf''.
+
+=== Example of smileys.conf ===
+
+<code>
+:MYFACE:                local/i_am_so_pretty.jpg
+</code>
+
+=== See also ===
+  * [[doku>smileys]]

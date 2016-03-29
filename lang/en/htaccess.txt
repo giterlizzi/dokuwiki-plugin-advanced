@@ -1,0 +1,16 @@
+==== .htaccess ====
+
+By default, DokuWiki does no URL rewriting, resulting in URLs like this:
+
+<code>
+http://example.com/doku.php?id=page
+</code>
+
+These URLs are considered ugly and are not indexed well by some search engines.
+
+The solution is to enable URL rewriting, which is disabled by default.
+
+=== See also ===
+
+  * [[doku>rewrite]]
+  * [[doku>config:userewrite]]

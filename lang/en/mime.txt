@@ -1,0 +1,20 @@
+==== MIME ====
+
+Which file types you can upload via the media manager popup or the fullscreen media manager is configured through the ''conf/mime.conf'' file. Additional mimetypes should be added in ''mime.local.conf''. The file expects an extension (without the dot) and a mime type. Prefixing the mime type with an exclamation mark (!) will force the browser to present a download dialog, even if a browser plugin for the file in question exists.
+
+=== Example of mime.conf ===
+
+<code>
+# this would play in the browser (if supported):
+wav         audio/wav
+
+# this would be downloaded
+wav         !audio/wav
+</code>
+
+File type icons can be added by placing an image file (PNG or GIF) named after the file extension into ''lib/images/fileicons/''.
+
+**Note:** because the stylesheet used for assigning the fileicons gets cached you need to force a rebuild by touching one of the config files.
+
+=== See also ===
+  * [[doku>mime]]

@@ -1,0 +1,17 @@
+==== Include Hooks ====
+
+Include hooks allow you to add additional HTML or PHP to the template without modifying any of the template files itself, making them safe to survive an update. Just create the appropriate file in either the template directory (''lib/tpl/<template>/'') or your ''conf/'' directory.
+
+=== Available Hooks ===
+
+^ Filename               ^ Position of included HTML                                                ^
+| ''meta.html''          | Inside the HTML <head>, use this to add additional styles or metaheaders |
+| ''sidebarheader.html'' | At the top of the sidebar (if any) |
+| ''sidebarfooter.html'' | At the bottom of the sidebar (if any) |
+| ''pageheader.html''    | At the top inside the content box, above the actual content |
+| ''pagefooter.html''    | At the bottom inside the content box, below the actual content |
+| ''header.html''        | At the top of the page, above the logo and wiki title |
+| ''footer.html''        | At the very end of the page after all other page content |
+
+=== See Also ===
+  * [[doku>template:dokuwiki]]

@@ -1,0 +1,5 @@
+====== Advanced DokuWiki configuration ======
+
+Use this page to control the advanced settings of your DokuWiki installation.
+
+Remember to press the **Save** button before leaving this page otherwise your changes will be lost.
