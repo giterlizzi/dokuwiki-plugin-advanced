@@ -8,7 +8,6 @@
 
 class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
 
-
   private $allowedFiles = array();
   private $fileInfo     = array();
 
@@ -59,7 +58,7 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     $file_default = null;
 
     if (! $file || ! $type) return array();
-#var_dump($config_cascade);
+
     switch($type) {
 
       case 'config':
@@ -102,7 +101,7 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
       'defaultName'     => basename($file_default),
       'localLastModify' => (file_exists($file_local) ? strftime($conf['dformat'], filemtime($file_local)) : ''),
     );
-#var_dump($file_info);
+
     return $file_info;
 
   }
@@ -121,6 +120,7 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     }
 
   }
+
 
   public function cmd_wordblock_update() {
 
