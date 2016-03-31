@@ -4,3 +4,5 @@ The internet isn't the place it used to be anymore. Everything good gets corrupt
 
 === See also ===
   * [[doku>blacklist]]
+  * [[https://meta.wikimedia.org/wiki/Spam_blacklist|Spam blacklist - Meta-Wiki - Wikimedia]]
+
