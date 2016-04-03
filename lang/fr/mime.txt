@@ -1,0 +1,20 @@
+==== Types MIME ====
+
+Chaque type de fichier que vous pouvez envoyer à l'aide du Gestionnaire de médias est configuré à partir du fichier ''conf/mime.conf''. Les types supplémentaires doivent être ajoutés dans le fichier ''mime.local.conf''. On y indique alors une extension (sans le point) et un type MIME. Préfixer le type avec un point d'exclamation (!) forcera le navigateur à présenter une fenêtre de téléchargement à l'utilisateur, même s'il existe un plugin de lecture pour lire le fichier.
+
+=== Exemple de fichier mime.conf ===
+
+<code>
+# ceci sera lu dans le navigateur (si supporté) :
+wav         audio/wav
+
+# Ceci sera téléchargé
+wav         !audio/wav
+</code>
+
+Les icônes de fichiers (format PNG ou GIF) peuvent être ajoutées dans le répertoire ''lib/images/fileicons/'' avec pour nom l'extension du fichier.
+
+**Note:** Du fait que la feuille de style utilisée pour assigner les icônes est mise en cache, vous devrez forcer une reconstruction en sauvegardant l'un des fichiers de configuration du Wiki.
+
+=== Voir aussi ===
+  * [[doku>mime]]
