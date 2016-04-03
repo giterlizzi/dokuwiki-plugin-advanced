@@ -1,0 +1,14 @@
+==== Abréviations et Acronymes ====
+
+DokuWiki peut automatiquement mettre en évidence les abréviations et acronymes (terminologie). Il suffit alors de pointer à l'aide de la souris sur l'une d'entre elle pour obtenir une explication, qui sera affichée en tant qu'infobulle. Par exemple, si la souris est positionnée sur le mot “CMS” (inclu dans la liste par défaut), l'infobulle affiche Content Management System.
+
+=== Exemple du fichier acronyms.conf ===
+
+<code>
+CMS          Content Management System
+CSS          Cascading Style Sheets
+HTML         HyperText Markup Language
+</code>
+
+=== Voir aussi ===
+  * [[doku>abbreviations]]
