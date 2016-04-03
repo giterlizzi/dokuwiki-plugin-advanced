@@ -132,7 +132,7 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     $blacklist = trim(preg_replace('/[\n]+/m', "\n", $blacklist)); # Remove multiple new line
 
     if (io_saveFile($file_info['local'], $blacklist)) {
-		msg($this->getLang('adv_blacklist_update'));
+		msg($this->getLang('adv_blacklist_update'), 1);
     } else {
 		msg($this->getLang('adv_blacklist_failed'), -1);
     }
