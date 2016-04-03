@@ -1,4 +1,4 @@
-==== MIME ====
+==== MIME Types ====
 
 Which file types you can upload via the media manager popup or the fullscreen media manager is configured through the ''conf/mime.conf'' file. Additional mimetypes should be added in ''mime.local.conf''. The file expects an extension (without the dot) and a mime type. Prefixing the mime type with an exclamation mark (!) will force the browser to present a download dialog, even if a browser plugin for the file in question exists.
 
