@@ -1,0 +1,12 @@
+==== Emoticones ====
+
+DokuWiki peut convertir les émoticones dans leur équivalent image. Les émoticones par défaut sont stockées dans le dossier ''lib/images/smileys/'' et configurés à partir du fichier ''conf/smileys.conf''. Le répertoire où l'on peut effectuer des ajouts d'images de manière sûre est ''lib/images/smileys/local'' et la configuration utilisateur se fait dans ''conf/smiles.local.conf''.
+
+=== Exemple du fichier smileys.conf ===
+
+<code>
+:MYFACE:                local/i_am_so_pretty.jpg
+</code>
+
+=== Voir aussi ===
+  * [[doku>smileys]]
