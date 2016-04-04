@@ -1,0 +1,14 @@
+===== Entités =====
+
+DokuWiki peut remplacer certains caractères ou certaines chaines par d'autres en se basant sur un fichier de configuration. Par défaut cela est utilisé pour convertir de nombreuses combinaisons dans leur équivalent typographique.
+
+=== Exemple de fichier entities.conf ===
+
+<code>
+(c)    ©
+(tm)   ™
+(r)    ®
+</code>
+
+=== Voir aussi ===
+  * [[doku>entities]]

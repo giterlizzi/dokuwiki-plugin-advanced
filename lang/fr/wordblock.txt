@@ -1,0 +1,7 @@
+==== Liste noire ====
+
+Internet n'est plus l'endroit qu'il fut autrefois. Tout ce qui est bon devient mauvais et c'est la même chose pour les Wiki. Si vous utilisz DokuWiki en intranet, cela n'est sûrement pas un problème pour vous, mais si vous envisagez de l'utiliser sur la toile, vous avez peut-être envie de bloquer certains mots indésirables.
+
+=== Voir aussi ===
+  * [[doku>blacklist]]
+  * [[https://meta.wikimedia.org/wiki/Spam_blacklist|Spam blacklist - Meta-Wiki - Wikimedia]]

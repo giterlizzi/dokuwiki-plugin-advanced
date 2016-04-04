@@ -132,9 +132,9 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     $blacklist = trim(preg_replace('/[\n]+/m', "\n", $blacklist)); # Remove multiple new line
 
     if (io_saveFile($file_info['local'], $blacklist)) {
-      msg('Blacklist update successfull!', 1);
+		msg($this->getLang('adv_blacklist_update'), 1);
     } else {
-      msg('Blacklist update failed!', -1);
+		msg($this->getLang('adv_blacklist_failed'), -1);
     }
 
   }
@@ -160,8 +160,9 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
 
     $file_name = $file_info['defaultName'];
     $file_path = $file_info['default'];
+	$lng_default = $this->getLang('adv_default');
 
-    echo "<h3>Default $file_name <small><a href=\"javascript:void(0)\" onclick=\"jQuery('.default-config').toggle(); jQuery(this).text(jQuery(this).text() == '[-]' ? '[+]' : '[-]')\">[+]</a></small></h3>";
+    echo "<h3>$lng_default $file_name <small><a href=\"javascript:void(0)\" onclick=\"jQuery('.default-config').toggle(); jQuery(this).text(jQuery(this).text() == '[-]' ? '[+]' : '[-]')\">[+]</a></small></h3>";
     echo '<div class="default-config" style="display:none">';
     echo '<textarea class="edit" rows="15" cols="" disabled="disabled">';
     echo io_readFile($file_path);
@@ -183,9 +184,12 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     $file_data    = (file_exists($file_path) ? io_readFile($file_path) : '');
     $file_lastmod = $file_info['localLastModify'];
     $file_name    = $file_info['localName'];
+	
+	$lng_edit     =	$this->getLang('adv_edit');
+	$lng_upd	  = $this->getLang('adv_blacklist_download');
 
-    echo "<h3>Edit $file_name file</h3>";
-
+	echo "<h3>$lng_edit $file_name</h3>";
+	
     echo '<form action="" method="post">';
     echo '<textarea name="content" class="edit" rows="15" cols="">';
     echo $file_data;
@@ -206,7 +210,7 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     echo '<button type="submit" name="cmd[save]" class="btn btn-primary primary">'. $lang['btn_save'] .'</button> ';
 
     if ($file_info['file'] == 'wordblock') {
-      echo '<button type="submit" name="cmd[wordblock_update]" class="btn btn-default">Update Blacklist from MediaWiki</button> ';
+      echo '<button type="submit" name="cmd[wordblock_update]" class="btn btn-default">'.$lng_upd.'</button> ';
     }
 
     echo '<button type="submit" class="btn btn-default">'. $lang['btn_cancel'] .'</button>';
@@ -257,21 +261,21 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
 
     // TOC Sections
     $toc_sections = array(
-      'config'     => 'Config',
+      'config'     => 'Configuration',
       'userstyle'  => 'Style',
-      'hook'       => 'Template Hooks',
-      'other'      => 'Others',
+      'hook'       => $this->getLang('adv_hooks'),
+      'other'      => $this->getLang('adv_others'),
     );
 
     // DokuWiki config
     $toc_configs = array(
-      'acronyms'  => 'Abbreviations and Acronyms',
-      'entities'  => 'Entities',
-      'interwiki' => 'InterWiki Links',
-      'mime'      => 'MIME',
-      'smileys'   => 'Smileys',
-      'scheme'    => 'URL Schemes',
-      'wordblock' => 'Blacklist',
+      'acronyms'  => $this->getLang('adv_abbrev'),
+      'entities'  => $this->getLang('adv_entities'),
+      'interwiki' => $this->getLang('adv_iwiki'),
+      'mime'      => $this->getLang('adv_mime'),
+      'smileys'   => $this->getLang('adv_smiley'),
+      'scheme'    => $this->getLang('adv_scheme'),
+      'wordblock' => $this->getLang('adv_blacklist'),
     );
 
     // User Style
@@ -285,17 +289,17 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     // Template Hooks
     $toc_hooks = array(
       'meta'          => 'Meta',
-      'sidebarheader' => 'Sidebar (Header)',
-      'sidebarfooter' => 'Sidebar (Footer)',
-      'pageheader'    => 'Page (Header)',
-      'pagefooter'    => 'Page (Footer)',
-      'header'        => 'Header',
-      'footer'        => 'Footer',
+      'sidebarheader' => $this->getLang('adv_sidebar').' ('.$this->getLang('adv_header').')',
+      'sidebarfooter' => $this->getLang('adv_sidebar').' ('.$this->getLang('adv_footer').')',
+      'pageheader'    => 'Page ('.$this->getLang('adv_header').')',
+      'pagefooter'    => 'Page ('.$this->getLang('adv_footer').')',
+      'header'        => $this->getLang('adv_header'),
+      'footer'        => $this->getLang('adv_footer'),
     );
 
     // Other config
     $toc_others = array(
-      'userscript' => 'User JavaScript',
+      'userscript' => $this->getLang('adv_ujs'),
       'htaccess'   => '.htaccess',
     );
 
@@ -304,9 +308,9 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
 
       case 'bootstrap3':
 
-        $toc_hooks['topheader']          = 'Top Header';
-        $toc_hooks['rightsidebarheader'] = 'Right Sidebar (Header)';
-        $toc_hooks['rightsidebarfooter'] = 'Right Sidebar (Footer)';
+        $toc_hooks['topheader']          = $this->getLang('adv_topheader');
+        $toc_hooks['rightsidebarheader'] = $this->getLang('adv_rsidebar').' ('.$this->getLang('adv_header').')';
+        $toc_hooks['rightsidebarfooter'] = $this->getLang('adv_rsidebar').' ('.$this->getLang('adv_footer').')';
         $toc_hooks['social']             = 'Social';
 
         break;

@@ -1,0 +1,3 @@
+====== Configuration avancée de DokuWiki ======
+
+Utilisez cette page pour gérer les paramètres avancés de votre installation. N'oubliez pas de cliquer sur le bouton **Sauvegarder** avant de quitter cette page, sinon vos changements seront perdus.

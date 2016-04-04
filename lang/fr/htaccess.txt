@@ -1,0 +1,16 @@
+==== .htaccess ====
+
+Par défaut, DokuWiki n'effectue par de réécriture d'URL (URL Rewriting), ce qui donne des liens comme ceci : 
+
+<code>
+http://example.com/doku.php?id=page
+</code>
+
+Ces URL sont considérés comme étant inadaptées pour l'indexation par les moteurs de recherche, et ne sont pas franchement pas très esthétiques.
+
+La solution est d'activer la réécriture d'URL, qui est désactivée par défaut.
+
+=== Voir aussi ===
+
+  * [[doku>rewrite]]
+  * [[doku>config:userewrite]]
