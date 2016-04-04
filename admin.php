@@ -45,6 +45,11 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
   }
 
 
+  /**
+   * Get configuration file info
+   *
+   * @return array
+   */
   private function getFileInfo() {
 
     global $INPUT;
@@ -132,9 +137,9 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     $blacklist = trim(preg_replace('/[\n]+/m', "\n", $blacklist)); # Remove multiple new line
 
     if (io_saveFile($file_info['local'], $blacklist)) {
-		msg($this->getLang('adv_blacklist_update'), 1);
+      msg($this->getLang('adv_blacklist_update'), 1);
     } else {
-		msg($this->getLang('adv_blacklist_failed'), -1);
+      msg($this->getLang('adv_blacklist_failed'), -1);
     }
 
   }
@@ -158,9 +163,9 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
 
     if (! $file_info['default'] || ! file_exists($file_info['default'])) return;
 
-    $file_name = $file_info['defaultName'];
-    $file_path = $file_info['default'];
-	$lng_default = $this->getLang('adv_default');
+    $file_name   = $file_info['defaultName'];
+    $file_path   = $file_info['default'];
+    $lng_default = $this->getLang('adv_default');
 
     echo "<h3>$lng_default $file_name <small><a href=\"javascript:void(0)\" onclick=\"jQuery('.default-config').toggle(); jQuery(this).text(jQuery(this).text() == '[-]' ? '[+]' : '[-]')\">[+]</a></small></h3>";
     echo '<div class="default-config" style="display:none">';
@@ -184,12 +189,12 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     $file_data    = (file_exists($file_path) ? io_readFile($file_path) : '');
     $file_lastmod = $file_info['localLastModify'];
     $file_name    = $file_info['localName'];
-	
-	$lng_edit     =	$this->getLang('adv_edit');
-	$lng_upd	  = $this->getLang('adv_blacklist_download');
 
-	echo "<h3>$lng_edit $file_name</h3>";
-	
+    $lng_edit     = $this->getLang('adv_edit');
+    $lng_upd      = $this->getLang('adv_blacklist_download');
+
+    echo "<h3>$lng_edit $file_name</h3>";
+
     echo '<form action="" method="post">';
     echo '<textarea name="content" class="edit" rows="15" cols="">';
     echo $file_data;
