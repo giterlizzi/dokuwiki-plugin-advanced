@@ -30,5 +30,12 @@ $lang['adv_blacklist_update']   = 'Blacklist update successfull !';
 $lang['adv_blacklist_failed']   = 'Blacklist update failed !';
 $lang['adv_blacklist_download'] = 'Update list from MediaWiki';
 
+$lang['adv_file_save_success'] = 'File %s saved successfull!';
+$lang['adv_file_save_fail']    = 'Unable to save %s file!';
+
 $lang['adv_edit']    = 'Edit';
 $lang['adv_default'] = 'Default';
+
+$lang['adv_btn_purge_css'] = 'Purge CSS cache';
+$lang['adv_btn_purge_js']  = 'Purge JS cache';
+$lang['adv_cache_purged']  = 'Cache purged!';

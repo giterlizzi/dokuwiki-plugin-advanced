@@ -119,9 +119,9 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     $file_info = $this->getFileInfo();
 
     if (io_saveFile($file_info['local'], $INPUT->post->str('content'))) {
-      msg(sprintf('File %s saved successfull!', $file_info['localName']), 1);
+      msg(sprintf($this->getLang('adv_file_save_success'), $file_info['localName']), 1);
     } else {
-      msg(sprintf('Unable to save %s file!', $file_info['localName']), -1);
+      msg(sprintf($this->getLang('adv_file_save_fail'), $file_info['localName']), -1);
     }
 
   }
@@ -167,7 +167,7 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     $file_path   = $file_info['default'];
     $lng_default = $this->getLang('adv_default');
 
-    echo "<h3>$lng_default $file_name <small><a href=\"javascript:void(0)\" onclick=\"jQuery('.default-config').toggle(); jQuery(this).text(jQuery(this).text() == '[-]' ? '[+]' : '[-]')\">[+]</a></small></h3>";
+    echo "<h3>$lng_default $file_name <small><a class=\"expand-reduce\" href=\"javascript:void(0)\">[+]</a></small></h3>";
     echo '<div class="default-config" style="display:none">';
     echo '<textarea class="edit" rows="15" cols="" disabled="disabled">';
     echo io_readFile($file_path);
@@ -213,6 +213,14 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     echo '<input type="hidden" name="page" value="advanced" />';
 
     echo '<button type="submit" name="cmd[save]" class="btn btn-primary primary">'. $lang['btn_save'] .'</button> ';
+
+    if ($file_info['type'] == 'userstyle' || $file_info['file'] == 'userscript') {
+
+      $purge_type = (($file_info['type'] == 'userstyle') ? 'css' : 'js');
+
+      echo '<button type="button" class="primary btn btn-primary purge-cache" data-purge-msg="'. $this->getLang('adv_cache_purged') .'" data-purge-type="'. $purge_type .'">'. $this->getLang("adv_btn_purge_$purge_type") .'</button> ';
+
+    }
 
     if ($file_info['file'] == 'wordblock') {
       echo '<button type="submit" name="cmd[wordblock_update]" class="btn btn-default">'.$lng_upd.'</button> ';
@@ -285,10 +293,10 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
 
     // User Style
     $toc_styles = array(
-      'style' => 'Screen',
-      'print' => 'Print',
-      'feed'  => 'Feed',
-      'all'   => 'All',
+      'screen' => 'Screen',
+      'print'  => 'Print',
+      'feed'   => 'Feed',
+      'all'    => 'All',
     );
 
     // Template Hooks
