@@ -218,7 +218,7 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
 
       $purge_type = (($file_info['type'] == 'userstyle') ? 'css' : 'js');
 
-      echo '<button type="button" class="primary btn btn-primary purge-cache" data-purge-msg="'. $this->getLang('adv_cache_purged') .'" data-purge-type="'. $purge_type .'">'. $this->getLang("adv_btn_purge_$purge_type") .'</button> ';
+      echo '<button type="button" class="primary btn btn-default purge-cache" data-purge-msg="'. $this->getLang('adv_cache_purged') .'" data-purge-type="'. $purge_type .'">'. $this->getLang("adv_btn_purge_$purge_type") .'</button> ';
 
     }
 
