@@ -30,5 +30,12 @@ $lang['adv_blacklist_update']   = 'Liste noire mise &agrave; jour !';
 $lang['adv_blacklist_failed']   = 'Erreur de mise &agrave; jour !';
 $lang['adv_blacklist_download'] = 'Mettre &agrave; jour depuis MediaWiki';
 
+$lang['adv_file_save_success'] = 'Fichier %s correctement sauvegard&eacute; !';
+$lang['adv_file_save_fail']    = 'Impossible de sauvegarder le fichier %s !';
+
 $lang['adv_edit']    = 'Editer';
 $lang['adv_default'] = 'Fichier par d&eacute;faut';
+
+$lang['adv_btn_purge_css'] = 'Purger le cache CSS';
+$lang['adv_btn_purge_js']  = 'Purger le cache JS';
+$lang['adv_cache_purged']  = 'Cache nettoy&eacute !';
