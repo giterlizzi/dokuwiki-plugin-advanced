@@ -3,7 +3,7 @@
  * French language file
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author     Vincent Lecomte (blacklord049)
+ * @author     Vincent (blacklord049)
  */
 
 $lang['menu']          = 'Configuration avanc&eacute;e';
@@ -23,7 +23,7 @@ $lang['adv_rsidebar']  = 'Barre Laterale Droite';
 $lang['adv_topheader'] = 'Sur En-tete';
 
 $lang['adv_ujs']       = 'JavaScript Utilisateur';
-$lang['adv_hooks']     = 'Greffons de modeles';
+$lang['adv_hooks']     = 'Attaches de modeles';
 $lang['adv_others']    = 'Autres';
 
 $lang['adv_blacklist_update']   = 'Liste noire mise &agrave; jour !';
