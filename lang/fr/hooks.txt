@@ -8,7 +8,7 @@ Créez juste le fichier approprié dans le dossier (''lib/tpl/<template>/'') ou 
 ^ Nom du fichier         ^ Position du fichier HTML                                                ^
 | ''meta.html''          | Dans le bloc <head>, à utiliser pour ajouter des clauses Meta ou des scripts supplémentaires |
 | ''sidebarheader.html'' | En haut de la barre latérale (si existante) |
-| ''sidebarfooter.html'' | En bas de la barre latérale (si existante)) |
+| ''sidebarfooter.html'' | En bas de la barre latérale (si existante) |
 | ''pageheader.html''    | En haut dans le bloc de contenu, au-dessus de tout |
 | ''pagefooter.html''    | En bas dans le bloc de contenu, au-dessous de tout  |
 | ''header.html''        | En haut de page, au-dessus du logo et du titre du Wiki |
