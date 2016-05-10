@@ -118,10 +118,24 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
 
     $file_info = $this->getFileInfo();
 
-    if (io_saveFile($file_info['local'], $INPUT->post->str('content'))) {
-      msg(sprintf($this->getLang('adv_file_save_success'), $file_info['localName']), 1);
+    $file_path   = $file_info['local'];
+    $file_name   = $file_info['localName'];
+    $file_backup = sprintf('%s.%s.gz', $file_path, date('YmdHis'));
+
+    $content_old = io_readFile($file_path);
+    $content_new = cleanText($INPUT->post->str('content'));
+
+    if (md5($content_old) === md5($content_new)) {
+      return false;
+    }
+
+    if (io_saveFile($file_path, $content_new)) {
+
+      if ($this->getConf('backup')) io_saveFile($file_backup, $content_old); // Create a backup
+      msg(sprintf($this->getLang('adv_file_save_success'), $file_name), 1);
+
     } else {
-      msg(sprintf($this->getLang('adv_file_save_fail'), $file_info['localName']), -1);
+      msg(sprintf($this->getLang('adv_file_save_fail'), $file_name), -1);
     }
 
   }
@@ -269,6 +283,7 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
 
     global $INPUT;
     global $conf;
+    global $ID;
 
     $current_section = $INPUT->str('type');
 
@@ -334,7 +349,6 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     $toc_items = array(
       'config'     => $toc_configs,
       'userstyle'  => $toc_styles,
-      'userscript' => $toc_js,
       'hook'       => $toc_hooks,
       'other'      => $toc_others,
     );
