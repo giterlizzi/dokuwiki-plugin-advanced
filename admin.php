@@ -83,18 +83,31 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
         $file_default = tpl_incdir() . "$file.html";
         break;
 
+      case 'plugin':
+        $file_local = DOKU_CONF . $file;
+        break;
+
     }
 
     if ($type == 'other') {
+
       switch ($file) {
+
         case 'htaccess':
           $file_default = DOKU_INC . '.htaccess.dist';
           $file_local   = DOKU_INC . '.htaccess';
           break;
+
         case 'userscript':
           $configs      = $config_cascade['userscript'];
           $file_local   = @$configs['default'][0];
+          break;
+
+        default:
+          $file_local = DOKU_CONF . $file;
+
       }
+
     }
 
     $file_info = array(
@@ -292,6 +305,7 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
       'config'     => 'Configuration',
       'userstyle'  => 'Style',
       'hook'       => $this->getLang('adv_hooks'),
+      'plugin'     => 'Plugins',
       'other'      => $this->getLang('adv_others'),
     );
 
@@ -345,12 +359,24 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
 
     }
 
+    global $plugin_controller;
+
+    foreach ($plugin_controller->getList('', true) as $plugin) {
+
+      switch ($plugin) {
+        case 'explain':
+          $toc_plugins['explain.conf'] = 'Explain';
+          break;
+      }
+
+    }
 
     $toc_items = array(
       'config'     => $toc_configs,
       'userstyle'  => $toc_styles,
       'hook'       => $toc_hooks,
       'other'      => $toc_others,
+      'plugin'     => $toc_plugins,
     );
 
     if ($current_section) {
