@@ -13,7 +13,7 @@ jQuery(document).ready(function() {
 
   $adv.find('.expand-reduce').on('click', function(e) {
     $adv.find('.default-config').toggle();
-    jQuery(this).text((jQuery(this).text() == '[-]') ? '[+]' : '[-]');
+    jQuery(this).text((jQuery(this).text() == '-') ? '+' : '-');
   });
 
   $adv.find('.purge-cache').on('click', function(e) {

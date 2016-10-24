@@ -179,7 +179,7 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin {
   private function help() {
 
     echo '<div class="help">';
-    echo $this->locale_xhtml((($this->fileInfo['type'] == 'hook') ? 'hooks' : $this->fileInfo['file']));
+    echo $this->locale_xhtml('config/'. (($this->fileInfo['type'] == 'hook') ? 'hooks' : $this->fileInfo['file']));
     echo '</div>';
     echo '<p>&nbsp;</p>';
 
@@ -198,7 +198,7 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin {
     $file_path   = $file_info['default'];
     $lng_default = $this->getLang('adv_default');
 
-    echo "<h3><a class=\"expand-reduce\" href=\"javascript:void(0)\">[+]</a> $lng_default $file_name</h3>";
+    echo "<h3>[<a class=\"expand-reduce\" href=\"javascript:void(0)\">+</a>] $lng_default $file_name</h3>";
     echo '<div class="default-config" style="display:none">';
     echo '<textarea class="edit" rows="15" cols="" disabled="disabled">';
     echo io_readFile($file_path);
@@ -281,7 +281,7 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin {
 
     echo '<div id="plugin_advanced_config">';
 
-    echo $this->locale_xhtml('intro');
+    echo $this->locale_xhtml('config/intro');
     echo '<p>&nbsp;</p>';
 
     if (isset($file_info) && in_array($file_info['file'], $this->allowedFiles)) {
