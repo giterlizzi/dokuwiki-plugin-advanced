@@ -6,7 +6,7 @@
  * @author     Giuseppe Di Terlizzi <giuseppe.diterlizzi@gmail.com>
  */
 
-class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
+class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin {
 
   private $allowedFiles = array();
   private $fileInfo     = array();
@@ -23,6 +23,10 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
    */
   public function forAdminOnly() {
       return true;
+  }
+
+  public function getMenuText($language) {
+    return $this->getLang('menu_config');
   }
 
   /**
@@ -175,7 +179,7 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
   private function help() {
 
     echo '<div class="help">';
-    echo $this->locale_xhtml((($this->fileInfo['type'] == 'hook') ? 'hooks' : $this->fileInfo['file']));
+    echo $this->locale_xhtml('config/'. (($this->fileInfo['type'] == 'hook') ? 'hooks' : $this->fileInfo['file']));
     echo '</div>';
     echo '<p>&nbsp;</p>';
 
@@ -194,7 +198,7 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     $file_path   = $file_info['default'];
     $lng_default = $this->getLang('adv_default');
 
-    echo "<h3>$lng_default $file_name <small><a class=\"expand-reduce\" href=\"javascript:void(0)\">[+]</a></small></h3>";
+    echo "<h3>[<a class=\"expand-reduce\" href=\"javascript:void(0)\">+</a>] $lng_default $file_name</h3>";
     echo '<div class="default-config" style="display:none">';
     echo '<textarea class="edit" rows="15" cols="" disabled="disabled">';
     echo io_readFile($file_path);
@@ -237,7 +241,7 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     formSecurityToken();
 
     echo '<input type="hidden" name="do" value="admin" />';
-    echo '<input type="hidden" name="page" value="advanced" />';
+    echo '<input type="hidden" name="page" value="advanced_config" />';
 
     echo '<button type="submit" name="cmd[save]" class="btn btn-primary primary">'. $lang['btn_save'] .'</button> ';
 
@@ -271,12 +275,13 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
     global $conf;
     global $ID;
 
-    $lang['toc'] = $this->getLang('menu');
+    $lang['toc'] = $this->getLang('menu_config');
 
     $this->fileInfo = $file_info = $this->getFileInfo();
 
-    echo sprintf('<div id="plugin_%s">', $this->getPluginName());
-    echo $this->locale_xhtml('intro');
+    echo '<div id="plugin_advanced_config">';
+
+    echo $this->locale_xhtml('config/intro');
     echo '<p>&nbsp;</p>';
 
     if (isset($file_info) && in_array($file_info['file'], $this->allowedFiles)) {
@@ -361,7 +366,13 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
 
     global $plugin_controller;
 
-    foreach ($plugin_controller->getList('', true) as $plugin) {
+    $plugin_list = $plugin_controller->getList('', true);
+
+    if (! is_array($plugin_list)) {
+      $plugin_list = array();
+    }
+
+    foreach ($plugin_list as $plugin) {
 
       switch ($plugin) {
         case 'explain':
@@ -388,7 +399,7 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
       $toc[] = array(
         'link'  => wl($ID, array(
           'do'   => 'admin',
-          'page' => $this->getPluginName(),
+          'page' => 'advanced_config',
           'type' => $section)
         ),
         'title' => $section_title,
@@ -403,7 +414,7 @@ class admin_plugin_advanced extends DokuWiki_Admin_Plugin {
           $toc[] = array(
             'link'  => wl($ID, array(
               'do' => 'admin',
-              'page'   => $this->getPluginName(),
+              'page'   => 'advanced_config',
               'type'   => $section,
               'file'   => $file,
               'sectok' => getSecurityToken())

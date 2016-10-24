@@ -1,7 +1,7 @@
 base   advanced
 author Giuseppe Di Terlizzi
 email  giuseppe.diterlizzi@gmail.com
-date   2016-08-04
+date   2016-10-24
 name   Advanced DokuWiki Config
 desc   Control the advanced settings of your DokuWiki installation
 url    https://www.dokuwiki.org/plugin:advanced

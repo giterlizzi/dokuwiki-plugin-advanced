@@ -6,7 +6,8 @@
  * @author     Giuseppe Di Terlizzi <giuseppe.diterlizzi@gmail.com>, Vincent Lecomte
  */
 
-$lang['menu'] = 'Advanced Configuration';
+
+$lang['menu_config']   = 'Advanced: Configuration';
 
 $lang['adv_abbrev']    = 'Abbreviations and Acronyms';
 $lang['adv_entities']  = 'Entities';

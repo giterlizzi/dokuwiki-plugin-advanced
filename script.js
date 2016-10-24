@@ -9,11 +9,11 @@
 
 jQuery(document).ready(function() {
 
-  var $adv = jQuery('#plugin_advanced');
+  var $adv = jQuery('#plugin_advanced_config');
 
   $adv.find('.expand-reduce').on('click', function(e) {
     $adv.find('.default-config').toggle();
-    jQuery(this).text((jQuery(this).text() == '[-]') ? '[+]' : '[-]');
+    jQuery(this).text((jQuery(this).text() == '-') ? '+' : '-');
   });
 
   $adv.find('.purge-cache').on('click', function(e) {

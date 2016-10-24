@@ -6,7 +6,7 @@
  * @author     Vincent (blacklord049)
  */
 
-$lang['menu']          = 'Configuration avanc&eacute;e';
+$lang['menu_config']   = 'Advanced: Configuration';
 
 $lang['adv_abbrev']    = 'Abreviations et Acronymes';
 $lang['adv_entities']  = 'Entites';
