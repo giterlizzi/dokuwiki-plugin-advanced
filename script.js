@@ -23,4 +23,18 @@ jQuery(document).ready(function() {
     });
   });
 
+  var $export = jQuery('#plugin_advanced_export');
+
+  $export.find('.export-all-pages').on('click', function() {
+
+    var $pages = $export.find('table tbody input[type=checkbox]');
+
+    if (jQuery(this).prop('checked')) {
+      $pages.prop('checked', true);
+    } else {
+      $pages.prop('checked', false);
+    }
+
+  });
+
 });

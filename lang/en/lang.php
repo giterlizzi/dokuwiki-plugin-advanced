@@ -8,6 +8,11 @@
 
 
 $lang['menu_config']   = 'Advanced: Configuration';
+$lang['menu_export']   = 'Advanced: Export Utility';
+
+$lang['export_select_namespace'] = 'Select the Namespace';
+$lang['export_select_pages']     = 'Select the Pages';
+
 
 $lang['adv_abbrev']    = 'Abbreviations and Acronyms';
 $lang['adv_entities']  = 'Entities';
