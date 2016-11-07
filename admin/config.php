@@ -360,6 +360,8 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin {
         $toc_hooks['rightsidebarfooter'] = $this->getLang('adv_rsidebar').' ('.$this->getLang('adv_footer').')';
         $toc_hooks['social']             = 'Social';
 
+        $toc_others['bootstrap3.themes.conf'] = 'Bootstrap3 NS Themes';
+
         break;
 
     }
