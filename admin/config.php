@@ -371,6 +371,7 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin {
     if (! is_array($plugin_list)) {
       $plugin_list = array();
     }
+    $toc_plugins = array();
 
     foreach ($plugin_list as $plugin) {
 
