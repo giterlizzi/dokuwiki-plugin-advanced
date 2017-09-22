@@ -23,11 +23,11 @@ jQuery(document).ready(function() {
     });
   });
 
-  var $export = jQuery('#plugin_advanced_export');
+  var $advanced_forms = jQuery('#plugin_advanced_export, #plugin_advanced_import');
 
-  $export.find('.export-all-pages').on('click', function() {
+  $advanced_forms.find('.export-all-pages, .import-all-pages').on('click', function() {
 
-    var $pages = $export.find('table tbody input[type=checkbox]');
+    var $pages = $advanced_forms.find('table.pages tbody input[type=checkbox]');
 
     if (jQuery(this).prop('checked')) {
       $pages.prop('checked', true);

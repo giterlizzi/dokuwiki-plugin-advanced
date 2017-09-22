@@ -1,0 +1,3 @@
+====== Advanced: Export Utility ======
+
+Use this page to backup your DokuWiki pages or for import (or deploy) into another DokuWiki installation by using [[this>?do=admin&page=advanced_import|Import Utility]].
