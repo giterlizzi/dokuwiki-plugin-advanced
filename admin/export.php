@@ -7,6 +7,8 @@
  * @author     Giuseppe Di Terlizzi <giuseppe.diterlizzi@gmail.com>
  */
 
+include_once(dirname(__FILE__) . "/../ZipLib.class.php");
+ 
 class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin {
 
   /**
@@ -247,17 +249,17 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin {
     }
 
     $namespace = str_replace(':', '-', str_replace('(root)', 'ROOT', $INPUT->str('ns')));
-    $timestamp = date('YmdHis');
+    $timestamp = date('Ymd-His');
 
-    $Zip = new \splitbrain\PHPArchive\Zip;
-    $Zip->create();
+    $Zip = new ZipLib;
 
     foreach ($pages as $page) {
 
-      $file     = wikiFN($page);
-      $fileinfo = str_replace($conf['datadir'], '', $file);
+      $file_fullpath = wikiFN($page);
+      $file_path     = str_replace($conf['datadir'], '', $file_fullpath);
+	  $file_content  = io_readFile($file_fullpath);
 
-      $Zip->addFile($file, $fileinfo);
+      $Zip->add_File($file_content, $file_path, 0);
 
     }
 
@@ -265,7 +267,7 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin {
     header("Content-Transfer-Encoding: Binary");
     header("Content-Disposition: attachment; filename=DokuWiki-export-$namespace-$timestamp.zip");
 
-    echo $Zip->getArchive();
+    echo $Zip->get_file();
     die();
 
   }

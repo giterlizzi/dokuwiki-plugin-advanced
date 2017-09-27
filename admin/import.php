@@ -7,6 +7,8 @@
  * @author     Giuseppe Di Terlizzi <giuseppe.diterlizzi@gmail.com>
  */
 
+include_once(dirname(__FILE__) . "/../ZipLib.class.php");
+
 class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin {
 
   /**
@@ -100,10 +102,9 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin {
     unlink($extract_dir);
     mkdir($extract_dir, 0755);
 
-    $Zip = new \splitbrain\PHPArchive\Zip;
-    $Zip->open($archive_file);
+    $Zip = new ZipLib;
 
-    if (! $extracted = $Zip->extract($extract_dir)) {
+    if (! $Zip->extract($archive_file, $extract_dir)) {
       msg($this->getLang('adv_imp_zip_extract_error'), -1);
       return 0;
     }
@@ -208,8 +209,7 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin {
 
     echo sprintf('<h3>2. %s</h3>', $this->getLang('adv_imp_select_pages'));
 
-    $Zip = new \splitbrain\PHPArchive\Zip;
-    $Zip->open($file_path);
+    $Zip = new ZipLib;
 
     echo '<table class="table inline pages" width="100%">';
     echo '<thead>
@@ -221,15 +221,15 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin {
     </thead>';
     echo '<tbody>';
 
-    foreach($Zip->contents() as $fileinfo) {
+    foreach($Zip->get_List($file_path) as $fileinfo) {
       echo '<tr>';
       echo sprintf('
         <td><input type="checkbox" name="files[%s]" class="import-file" /></td>
         <td>%s</td>
         <td>%s</td>',
-        $fileinfo->getPath(),
-        $fileinfo->getPath(),
-        filesize_h($fileinfo->getSize()));
+        $fileinfo['filename'],
+        $fileinfo['filename'],
+        filesize_h($fileinfo['size']));
       echo '<tr>';
     }
 
