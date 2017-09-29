@@ -1,7 +1,7 @@
 base   advanced
 author Giuseppe Di Terlizzi
 email  giuseppe.diterlizzi@gmail.com
-date   2017-09-27
+date   2017-09-29
 name   Advanced DokuWiki Config
 desc   Import/Export utility and control the advanced settings of your DokuWiki installation
 url    https://www.dokuwiki.org/plugin:advanced
