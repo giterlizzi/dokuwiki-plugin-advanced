@@ -79,8 +79,16 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin {
 
       case 'userstyle':
       case 'userscript':
-        $configs      = $config_cascade[$type][$file];
-        $file_local   = @$configs[0];
+
+        $configs = $config_cascade[$type][$file];
+
+        # Detect new DokuWiki release config (css, less)
+        if (is_array(@$configs)) {
+          $file_local = @$configs[0];
+        } else {
+          $file_local = $configs;
+        }
+
         break;
 
       case 'hook':
@@ -104,8 +112,12 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin {
           break;
 
         case 'userscript':
-          $configs      = $config_cascade['userscript'];
-          $file_local   = @$configs['default'][0];
+          $configs = $config_cascade['userscript'];
+          if (is_array(@$configs['default'])) {
+            $file_local = @$configs['default'][0];
+          } else {
+            $file_local = @$configs['default'];
+          }
           break;
 
         default:
