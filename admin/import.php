@@ -143,7 +143,7 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin {
     }
 
     unlink($archive_file);
-    unlink($extract_dir);
+    rmdir($extract_dir);
 
     if (count($imported_pages)) {
       msg($this->getLang('adv_imp_pages_import_success'));
