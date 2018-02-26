@@ -4,7 +4,7 @@
  * Home      http://dokuwiki.org/plugin:advanced
  * Author    Giuseppe Di Terlizzi <giuseppe.diterlizzi@gmail.com>
  * License   GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * Copyright (C) 2016, Giuseppe Di Terlizzi
+ * Copyright (C) 2016-2018, Giuseppe Di Terlizzi
  */
 
 jQuery(document).ready(function() {

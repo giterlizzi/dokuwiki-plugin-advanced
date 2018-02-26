@@ -1,10 +1,9 @@
-Advanced Config Plugin for DokuWiki
-===================================
+# Advanced Plugin for DokuWiki
 
 Control the advanced settings of your DokuWiki installation.
 
 All documentation for this plugin can be found at
-http://www.dokuwiki.org/plugin:advanced
+https://www.dokuwiki.org/plugin:advanced
 
 If you install this plugin manually, make sure it is installed in
 lib/plugins/advanced/ - if the folder is called different it
