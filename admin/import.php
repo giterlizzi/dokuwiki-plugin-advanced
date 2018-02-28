@@ -142,8 +142,11 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin {
 
     }
 
+    # Delete import archive
     unlink($archive_file);
-    rmdir($extract_dir);
+
+    # Delete the extract directory
+    io_rmdir($extract_dir, true);
 
     if (count($imported_pages)) {
       msg($this->getLang('adv_imp_pages_import_success'));
