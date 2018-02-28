@@ -7,9 +7,10 @@
  */
 
 
-$lang['menu_config'] = 'DokuWiki Advanced: Configuration';
-$lang['menu_export'] = 'DokuWiki Advanced: Export Utility';
-$lang['menu_import'] = 'DokuWiki Advanced: Import Utility';
+$lang['menu_config']      = 'Advanced: Configuration';
+$lang['menu_export']      = 'Advanced: Export Utility';
+$lang['menu_import']      = 'Advanced: Import Utility';
+$lang['menu_maintenance'] = 'Advanced: Maintenance';
 
 
 $lang['adv_select_all_pages'] = 'Select all pages';

@@ -1,0 +1,3 @@
+====== Advanced: Maintenance ======
+
+Use this page to maintenance your DokuWiki installation.
