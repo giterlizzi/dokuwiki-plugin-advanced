@@ -7,447 +7,533 @@
  * @author     Giuseppe Di Terlizzi <giuseppe.diterlizzi@gmail.com>
  */
 
-class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin {
+class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
+{
 
-  private $allowedFiles = array();
-  private $fileInfo     = array();
+    private $allowedFiles = array();
+    private $fileInfo     = array();
 
-  /**
-   * @return int sort number in admin menu
-   */
-  public function getMenuSort() {
-      return 1;
-  }
-
-  /**
-   * @return bool true if only access for superuser, false is for superusers and moderators
-   */
-  public function forAdminOnly() {
-      return true;
-  }
-
-  public function getMenuText($language) {
-    return $this->getLang('menu_config');
-  }
-
-  /**
-    * handle user request
-    */
-  public function handle() {
-
-    global $INPUT;
-
-    if (! isset($_REQUEST['cmd'])) return;
-    if (! checkSecurityToken())    return;
-
-    $cmd = $INPUT->extract('cmd')->str('cmd');
-
-    if ($cmd) {
-      $cmd = "cmd_$cmd";
-      $this->$cmd();
+    /**
+     * @return int sort number in admin menu
+     */
+    public function getMenuSort()
+    {
+        return 1;
     }
 
-  }
+    /**
+     * @return bool true if only access for superuser, false is for superusers and moderators
+     */
+    public function forAdminOnly()
+    {
+        return true;
+    }
 
+    public function getMenuIcon()
+    {
+        return dirname(__FILE__) . '/../svg/cogs.svg';
+    }
 
-  /**
-   * Get configuration file info
-   *
-   * @return array
-   */
-  private function getFileInfo() {
+    public function getMenuText($language)
+    {
+        return $this->getLang('menu_config');
+    }
 
-    global $INPUT;
-    global $conf;
-    global $config_cascade;
+    /**
+     * handle user request
+     */
+    public function handle()
+    {
 
-    $file = $INPUT->str('file');
-    $type = $INPUT->str('type');
+        global $INPUT;
 
-    $file_local   = null;
-    $file_default = null;
+        if (!isset($_REQUEST['cmd'])) {
+            return;
+        }
 
-    if (! $file || ! $type) return array();
+        if (!checkSecurityToken()) {
+            return;
+        }
 
-    switch($type) {
+        $cmd = $INPUT->extract('cmd')->str('cmd');
 
-      case 'config':
-        $configs      = $config_cascade[$file];
-        $file_default = @$configs['default'][0];
-        $file_local   = @$configs['local'][0];
-        break;
+        if ($cmd) {
+            $cmd = "cmd_$cmd";
+            $this->$cmd();
+        }
 
-      case 'userstyle':
-      case 'userscript':
+    }
 
-        $configs = $config_cascade[$type][$file];
+    /**
+     * Get configuration file info
+     *
+     * @return array
+     */
+    private function getFileInfo()
+    {
 
-        # Detect new DokuWiki release config (css, less)
-        if (is_array(@$configs)) {
-          $file_local = @$configs[0];
+        global $INPUT;
+        global $conf;
+        global $config_cascade;
+
+        $file = $INPUT->str('file');
+        $tab  = $INPUT->str('tab');
+
+        $file_local   = null;
+        $file_default = null;
+
+        if (!$file || !$tab) {
+            return array();
+        }
+
+        switch ($tab) {
+
+            case 'config':
+                $configs      = $config_cascade[$file];
+                $file_default = @$configs['default'][0];
+                $file_local   = @$configs['local'][0];
+                break;
+
+            case 'userstyle':
+            case 'userscript':
+
+                $configs = $config_cascade[$tab][$file];
+
+                # Detect new DokuWiki release config (css, less)
+                if (is_array(@$configs)) {
+                    $file_local = @$configs[0];
+                } else {
+                    $file_local = $configs;
+                }
+
+                break;
+
+            case 'hook':
+                $file_local   = DOKU_CONF . "$file.html";
+                $file_default = tpl_incdir() . "$file.html";
+                break;
+
+            case 'plugin':
+                $file_local = DOKU_CONF . $file;
+                break;
+
+        }
+
+        if ($tab == 'other') {
+
+            switch ($file) {
+
+                case 'acl':
+                    $file_local   = DOKU_CONF . 'acl.auth.php';
+                    $file_default = DOKU_CONF . 'acl.auth.php.dist';
+                    break;
+
+                case 'users':
+                    $file_local   = DOKU_CONF . 'users.auth.php';
+                    $file_default = DOKU_CONF . 'users.auth.php.dist';
+                    break;
+
+                case 'htaccess':
+                    $file_default = DOKU_INC . '.htaccess.dist';
+                    $file_local   = DOKU_INC . '.htaccess';
+                    break;
+
+                case 'userscript':
+                    $configs = $config_cascade['userscript'];
+                    if (is_array(@$configs['default'])) {
+                        $file_local = @$configs['default'][0];
+                    } else {
+                        $file_local = @$configs['default'];
+                    }
+                    break;
+
+                default:
+                    $file_local = DOKU_CONF . $file;
+
+            }
+
+        }
+
+        $file_info = array(
+            'tab'             => $tab,
+            'file'            => $file,
+            'default'         => $file_default,
+            'local'           => $file_local,
+            'localName'       => basename($file_local),
+            'defaultName'     => basename($file_default),
+            'localLastModify' => (file_exists($file_local) ? strftime($conf['dformat'], filemtime($file_local)) : ''),
+            'help'            => 'config/' . (($tab == 'hook') ? 'hooks' : $file),
+        );
+
+        return $file_info;
+
+    }
+
+    public function cmd_save()
+    {
+
+        global $INPUT;
+
+        $file_info = $this->getFileInfo();
+
+        $file_path   = $file_info['local'];
+        $file_name   = $file_info['localName'];
+        $file_backup = sprintf('%s.%s.gz', $file_path, date('YmdHis'));
+
+        $content_old = io_readFile($file_path);
+        $content_new = cleanText($INPUT->post->str('content'));
+
+        if (md5($content_old) === md5($content_new)) {
+            return false;
+        }
+
+        if (io_saveFile($file_path, $content_new)) {
+
+            if ($this->getConf('backup')) {
+                io_saveFile($file_backup, $content_old);
+            }
+            // Create a backup
+            msg(sprintf($this->getLang('adv_conf_file_save_success'), $file_name), 1);
+
         } else {
-          $file_local = $configs;
+            msg(sprintf($this->getLang('adv_conf_file_save_fail'), $file_name), -1);
         }
 
-        break;
+    }
 
-      case 'hook':
-        $file_local   = DOKU_CONF . "$file.html";
-        $file_default = tpl_incdir() . "$file.html";
-        break;
+    public function cmd_wordblock_update()
+    {
 
-      case 'plugin':
-        $file_local = DOKU_CONF . $file;
-        break;
+        $file_info = $this->getFileInfo();
+
+        $http      = new DokuHTTPClient();
+        $blacklist = $http->get('https://meta.wikimedia.org/wiki/Spam_blacklist?action=raw');
+        $blacklist = trim(preg_replace('/#(.*)$/m', '', $blacklist)); # Remove all comments from file
+        $blacklist = trim(preg_replace('/[\n]+/m', "\n", $blacklist)); # Remove multiple new line
+
+        if (io_saveFile($file_info['local'], $blacklist)) {
+            msg($this->getLang('adv_conf_blacklist_update'), 1);
+        } else {
+            msg($this->getLang('adv_conf_blacklist_failed'), -1);
+        }
 
     }
 
-    if ($type == 'other') {
+    private function help()
+    {
 
-      switch ($file) {
+        echo '<div class="help">';
+        echo $this->locale_xhtml($this->fileInfo['help']);
+        echo '</div>';
+        echo '<p>&nbsp;</p>';
 
-        case 'htaccess':
-          $file_default = DOKU_INC . '.htaccess.dist';
-          $file_local   = DOKU_INC . '.htaccess';
-          break;
-
-        case 'userscript':
-          $configs = $config_cascade['userscript'];
-          if (is_array(@$configs['default'])) {
-            $file_local = @$configs['default'][0];
-          } else {
-            $file_local = @$configs['default'];
-          }
-          break;
-
-        default:
-          $file_local = DOKU_CONF . $file;
-
-      }
+        return true;
 
     }
 
-    $file_info = array(
-      'type'            => $type,
-      'file'            => $file,
-      'default'         => $file_default,
-      'local'           => $file_local,
-      'localName'       => basename($file_local),
-      'defaultName'     => basename($file_default),
-      'localLastModify' => (file_exists($file_local) ? strftime($conf['dformat'], filemtime($file_local)) : ''),
-    );
+    private function getDefault()
+    {
 
-    return $file_info;
+        $file_info = $this->fileInfo;
 
-  }
+        if (!$file_info['default'] || !file_exists($file_info['default'])) {
+            return;
+        }
 
+        $file_name   = $file_info['defaultName'];
+        $file_path   = $file_info['default'];
+        $lng_default = $this->getLang('adv_conf_default');
 
-  public function cmd_save() {
+        echo '<h3><a class="expand-reduce" href="javascript:void(0)" style="font-family:monospace; text-decoration:none">[+]</a> ' . "$lng_default $file_name</h3>";
+        echo '<div class="default-config" style="display:none">';
+        echo '<textarea class="edit" rows="15" cols="" disabled="disabled">';
+        echo hsc(io_readFile($file_path));
+        echo '</textarea>';
+        echo '<p class="docInfo small pull-right">' . $file_path . '</p>';
+        echo '</div><p>&nbsp;</p>';
 
-    global $INPUT;
-
-    $file_info = $this->getFileInfo();
-
-    $file_path   = $file_info['local'];
-    $file_name   = $file_info['localName'];
-    $file_backup = sprintf('%s.%s.gz', $file_path, date('YmdHis'));
-
-    $content_old = io_readFile($file_path);
-    $content_new = cleanText($INPUT->post->str('content'));
-
-    if (md5($content_old) === md5($content_new)) {
-      return false;
-    }
-
-    if (io_saveFile($file_path, $content_new)) {
-
-      if ($this->getConf('backup')) io_saveFile($file_backup, $content_old); // Create a backup
-      msg(sprintf($this->getLang('adv_conf_file_save_success'), $file_name), 1);
-
-    } else {
-      msg(sprintf($this->getLang('adv_conf_file_save_fail'), $file_name), -1);
-    }
-
-  }
-
-
-  public function cmd_wordblock_update() {
-
-    $file_info = $this->getFileInfo();
-
-    $http = new DokuHTTPClient();
-    $blacklist = $http->get('https://meta.wikimedia.org/wiki/Spam_blacklist?action=raw');
-    $blacklist = trim(preg_replace('/#(.*)$/m', '', $blacklist));  # Remove all comments from file
-    $blacklist = trim(preg_replace('/[\n]+/m', "\n", $blacklist)); # Remove multiple new line
-
-    if (io_saveFile($file_info['local'], $blacklist)) {
-      msg($this->getLang('adv_conf_blacklist_update'), 1);
-    } else {
-      msg($this->getLang('adv_conf_blacklist_failed'), -1);
-    }
-
-  }
-
-
-  private function help() {
-
-    echo '<div class="help">';
-    echo $this->locale_xhtml('config/'. (($this->fileInfo['type'] == 'hook') ? 'hooks' : $this->fileInfo['file']));
-    echo '</div>';
-    echo '<p>&nbsp;</p>';
-
-    return true;
-
-  }
-
-
-  private function getDefault() {
-
-    $file_info = $this->fileInfo;
-
-    if (! $file_info['default'] || ! file_exists($file_info['default'])) return;
-
-    $file_name   = $file_info['defaultName'];
-    $file_path   = $file_info['default'];
-    $lng_default = $this->getLang('adv_conf_default');
-
-    echo "<h3>[<a class=\"expand-reduce\" href=\"javascript:void(0)\">+</a>] $lng_default $file_name</h3>";
-    echo '<div class="default-config" style="display:none">';
-    echo '<textarea class="edit" rows="15" cols="" disabled="disabled">';
-    echo io_readFile($file_path);
-    echo '</textarea>';
-    echo '<p class="docInfo small pull-right">'. $file_path .'</p>';
-    echo '</div>';
-
-    return true;
-
-  }
-
-
-  private function editForm() {
-
-    global $lang;
-
-    $file_info    = $this->fileInfo;
-    $file_path    = $file_info['local'];
-    $file_data    = (file_exists($file_path) ? io_readFile($file_path) : '');
-    $file_lastmod = $file_info['localLastModify'];
-    $file_name    = $file_info['localName'];
-
-    $lng_edit     = $this->getLang('adv_conf_edit');
-    $lng_upd      = $this->getLang('adv_conf_blacklist_download');
-
-    echo "<h3>$lng_edit $file_name</h3>";
-
-    echo '<form action="" method="post">';
-    echo '<textarea name="content" class="edit" rows="15" cols="">';
-    echo $file_data;
-    echo '</textarea>';
-
-    echo '<p class="docInfo small pull-right">';
-    echo $file_path;
-    echo (file_exists($file_path) ? ' · '. $lang['lastmod'] . ' ' . $file_lastmod : '');
-    echo '</p>';
-
-    echo '<p>&nbsp;</p>';
-
-    formSecurityToken();
-
-    echo '<input type="hidden" name="do" value="admin" />';
-    echo '<input type="hidden" name="page" value="advanced_config" />';
-
-    echo '<button type="submit" name="cmd[save]" class="btn btn-primary primary">'. $lang['btn_save'] .'</button> ';
-
-    if ($file_info['type'] == 'userstyle' || $file_info['file'] == 'userscript') {
-
-      $purge_type = (($file_info['type'] == 'userstyle') ? 'css' : 'js');
-
-      echo '<button type="button" class="primary btn btn-default purge-cache" data-purge-msg="'. $this->getLang('adv_conf_cache_purged') .'" data-purge-type="'. $purge_type .'">'. $this->getLang("adv_btn_purge_$purge_type") .'</button> ';
+        return true;
 
     }
 
-    if ($file_info['file'] == 'wordblock') {
-      echo '<button type="submit" name="cmd[wordblock_update]" class="btn btn-default">'.$lng_upd.'</button> ';
-    }
+    private function editForm()
+    {
 
-    echo '<button type="submit" class="btn btn-default">'. $lang['btn_cancel'] .'</button>';
-    echo '</form>';
+        global $lang;
 
-    return true;
+        $file_info    = $this->fileInfo;
+        $file_path    = $file_info['local'];
+        $file_data    = (file_exists($file_path) ? io_readFile($file_path) : '');
+        $file_lastmod = $file_info['localLastModify'];
+        $file_name    = $file_info['localName'];
 
-  }
+        $lng_edit = $this->getLang('adv_conf_edit');
+        $lng_upd  = $this->getLang('adv_conf_blacklist_download');
 
+        echo "<h3>$lng_edit $file_name</h3>";
 
-  /**
-    * output appropriate html
-    */
-  public function html() {
+        echo '<form action="" method="post">';
+        echo '<textarea name="content" class="edit" rows="15" cols="">';
+        echo $file_data;
+        echo '</textarea>';
 
-    global $INPUT;
-    global $lang;
-    global $conf;
-    global $ID;
+        echo '<p class="docInfo small pull-right">';
+        echo $file_path;
+        echo (file_exists($file_path) ? ' · ' . $lang['lastmod'] . ' ' . $file_lastmod : '');
+        echo '</p>';
 
-    $lang['toc'] = $this->getLang('menu_config');
+        echo '<p>&nbsp;</p>';
 
-    $this->fileInfo = $file_info = $this->getFileInfo();
+        formSecurityToken();
 
-    echo '<div id="plugin_advanced_config">';
+        echo '<input type="hidden" name="do" value="admin" />';
+        echo '<input type="hidden" name="page" value="advanced_config" />';
 
-    echo $this->locale_xhtml('config/intro');
-    echo '<p>&nbsp;</p>';
+        echo '<button type="submit" name="cmd[save]" class="btn btn-primary primary">' . $lang['btn_save'] . '</button> ';
 
-    if (isset($file_info['file']) && in_array($file_info['file'], $this->allowedFiles)) {
+        if ($file_info['tab'] == 'userstyle' || $file_info['file'] == 'userscript') {
 
-      $this->help();
-      $this->getDefault();
-      $this->editForm();
+            $purge_type = (($file_info['tab'] == 'userstyle') ? 'css' : 'js');
 
-    }
-
-    echo '</div>';
-
-  }
-
-
-  public function getTOC() {
-
-    global $INPUT;
-    global $conf;
-    global $ID;
-
-    $current_section = $INPUT->str('type');
-
-    // TOC Sections
-    $toc_sections = array(
-      'config'     => 'Configuration',
-      'userstyle'  => 'Style',
-      'hook'       => $this->getLang('adv_conf_hooks'),
-      'plugin'     => 'Plugins',
-      'other'      => $this->getLang('adv_conf_others'),
-    );
-
-    // DokuWiki config
-    $toc_configs = array(
-      'acronyms'  => $this->getLang('adv_conf_abbrev'),
-      'entities'  => $this->getLang('adv_conf_entities'),
-      'interwiki' => $this->getLang('adv_conf_iwiki'),
-      'mime'      => $this->getLang('adv_conf_mime'),
-      'smileys'   => $this->getLang('adv_conf_smiley'),
-      'scheme'    => $this->getLang('adv_conf_scheme'),
-      'wordblock' => $this->getLang('adv_conf_blacklist'),
-    );
-
-    // User Style
-    $toc_styles = array(
-      'screen' => 'Screen',
-      'print'  => 'Print',
-      'feed'   => 'Feed',
-      'all'    => 'All',
-    );
-
-    // Template Hooks
-    $toc_hooks = array(
-      'meta'          => 'Meta',
-      'sidebarheader' => $this->getLang('adv_conf_sidebar').' ('.$this->getLang('adv_conf_header').')',
-      'sidebarfooter' => $this->getLang('adv_conf_sidebar').' ('.$this->getLang('adv_conf_footer').')',
-      'pageheader'    => 'Page ('.$this->getLang('adv_conf_header').')',
-      'pagefooter'    => 'Page ('.$this->getLang('adv_conf_footer').')',
-      'header'        => $this->getLang('adv_conf_header'),
-      'footer'        => $this->getLang('adv_conf_footer'),
-    );
-
-    // Other config
-    $toc_others = array(
-      'userscript' => $this->getLang('adv_conf_ujs'),
-      'htaccess'   => '.htaccess',
-    );
-
-    // Specific Template Hooks
-    switch ($conf['template']) {
-
-      case 'bootstrap3':
-
-        $toc_hooks['topheader']          = $this->getLang('adv_conf_topheader');
-        $toc_hooks['rightsidebarheader'] = $this->getLang('adv_conf_rsidebar').' ('.$this->getLang('adv_conf_header').')';
-        $toc_hooks['rightsidebarfooter'] = $this->getLang('adv_conf_rsidebar').' ('.$this->getLang('adv_conf_footer').')';
-        $toc_hooks['social']             = 'Social';
-
-        $toc_others['bootstrap3.themes.conf'] = 'Bootstrap3 NS Themes';
-
-        break;
-
-    }
-
-    global $plugin_controller;
-
-    $plugin_list = $plugin_controller->getList('', true);
-
-    if (! is_array($plugin_list)) {
-      $plugin_list = array();
-    }
-    $toc_plugins = array();
-
-    foreach ($plugin_list as $plugin) {
-
-      switch ($plugin) {
-        case 'explain':
-          $toc_plugins['explain.conf'] = 'Explain';
-          break;
-      }
-
-    }
-
-    $toc_items = array(
-      'config'     => $toc_configs,
-      'userstyle'  => $toc_styles,
-      'hook'       => $toc_hooks,
-      'other'      => $toc_others,
-      'plugin'     => $toc_plugins,
-    );
-
-    if ($current_section) {
-      $this->allowedFiles = array_keys($toc_items[$current_section]);
-    }
-
-    foreach ($toc_sections as $section => $section_title) {
-
-      $toc[] = array(
-        'link'  => wl($ID, array(
-          'do'   => 'admin',
-          'page' => 'advanced_config',
-          'type' => $section)
-        ),
-        'title' => $section_title,
-        'level' => 1,
-        'type'  => 'ul',
-      );
-
-      foreach ($toc_items[$section] as $file => $title) {
-
-        if ($current_section == $section) {
-
-          $toc[] = array(
-            'link'  => wl($ID, array(
-              'do' => 'admin',
-              'page'   => 'advanced_config',
-              'type'   => $section,
-              'file'   => $file,
-              'sectok' => getSecurityToken())
-            ),
-            'title' => $title,
-            'level' => 2,
-            'type'  => 'ul',
-          );
+            echo '<button type="button" class="primary btn btn-default purge-cache" data-purge-msg="' . $this->getLang('adv_conf_cache_purged') . '" data-purge-type="' . $purge_type . '">' . $this->getLang("adv_btn_purge_$purge_type") . '</button> ';
 
         }
 
-      }
+        if ($file_info['file'] == 'wordblock') {
+            echo '<button type="submit" name="cmd[wordblock_update]" class="btn btn-default">' . $lng_upd . '</button> ';
+        }
+
+        echo '<button type="submit" class="btn btn-default">' . $lang['btn_cancel'] . '</button>';
+        echo '</form>';
+
+        return true;
 
     }
 
-    return $toc;
+    /**
+     * output appropriate html
+     */
+    public function html()
+    {
 
-  }
+        global $INPUT;
+        global $lang;
+        global $conf;
+        global $ID;
+
+        $lang['toc'] = $this->getLang('menu_config');
+
+        $this->fileInfo = $file_info = $this->getFileInfo();
+
+        echo '<div id="plugin_advanced_config">';
+
+        echo $this->locale_xhtml('config/intro');
+        echo '<p>&nbsp;</p>';
+
+        if ($current_tab = $this->currentTab()) {
+
+            $tab_label = $this->getTabs();
+            echo '<h2>' . $tab_label[$current_tab] . '</h2>';
+            echo '<p><ul class="tabs">';
+
+            foreach ($this->getTab($current_tab) as $file => $title) {
+
+                $file_class = '';
+
+                if ($INPUT->str('file') == $file) {
+                    $file_class = 'active';
+                }
+
+                echo '<li class="' . $file_class . '"><a href="' . $this->tabURL($current_tab, array('file' => $file, 'sectok' => getSecurityToken())) . '">' . $title . '</a></li>';
+            }
+
+            echo '</ul></p>';
+
+        }
+
+        if (isset($file_info['file']) && in_array($file_info['file'], $this->allowedFiles)) {
+
+            $this->help();
+            $this->getDefault();
+            $this->editForm();
+
+        }
+
+        echo '</div>';
+
+    }
+
+    public function getTabs()
+    {
+
+        return array(
+            'config'    => 'Configuration',
+            'userstyle' => 'Style',
+            'hook'      => $this->getLang('adv_conf_hooks'),
+            'plugin'    => 'Plugins',
+            'other'     => $this->getLang('adv_conf_others'),
+        );
+    }
+
+    public function getTab($tab)
+    {
+        global $conf;
+        global $plugin_controller;
+
+        $current_section = $this->currentTab();
+
+        // DokuWiki config
+        $toc_configs = array(
+            'acronyms'  => $this->getLang('adv_conf_abbrev'),
+            'entities'  => $this->getLang('adv_conf_entities'),
+            'interwiki' => $this->getLang('adv_conf_iwiki'),
+            'mime'      => $this->getLang('adv_conf_mime'),
+            'smileys'   => $this->getLang('adv_conf_smiley'),
+            'scheme'    => $this->getLang('adv_conf_scheme'),
+            'wordblock' => $this->getLang('adv_conf_blacklist'),
+            'main'      => 'Main',
+        );
+
+        // User Style
+        $toc_styles = array(
+            'screen' => 'Screen',
+            'print'  => 'Print',
+            'feed'   => 'Feed',
+            'all'    => 'All',
+        );
+
+        // Template Hooks
+        $toc_hooks = array(
+            'meta'          => 'Meta',
+            'sidebarheader' => $this->getLang('adv_conf_sidebar') . ' (' . $this->getLang('adv_conf_header') . ')',
+            'sidebarfooter' => $this->getLang('adv_conf_sidebar') . ' (' . $this->getLang('adv_conf_footer') . ')',
+            'pageheader'    => 'Page (' . $this->getLang('adv_conf_header') . ')',
+            'pagefooter'    => 'Page (' . $this->getLang('adv_conf_footer') . ')',
+            'header'        => $this->getLang('adv_conf_header'),
+            'footer'        => $this->getLang('adv_conf_footer'),
+        );
+
+        // Other config
+        $toc_others = array(
+            'userscript' => $this->getLang('adv_conf_ujs'),
+            'htaccess'   => '.htaccess',
+        );
+
+        if ($conf['useacl']) {
+            $toc_others['acl'] = 'ACL';
+        }
+
+        if ($conf['authtype'] == 'authplain') {
+            $toc_others['users'] = 'Users';
+        }
+
+        // Specific Template Hooks
+        switch ($conf['template']) {
+
+            case 'bootstrap3':
+
+                $toc_hooks['topheader']          = $this->getLang('adv_conf_topheader');
+                $toc_hooks['rightsidebarheader'] = $this->getLang('adv_conf_rsidebar') . ' (' . $this->getLang('adv_conf_header') . ')';
+                $toc_hooks['rightsidebarfooter'] = $this->getLang('adv_conf_rsidebar') . ' (' . $this->getLang('adv_conf_footer') . ')';
+                $toc_hooks['social']             = 'Social';
+
+                $toc_others['bootstrap3.themes.conf'] = 'Bootstrap3 NS Themes';
+
+                break;
+
+        }
+
+        $plugin_list = $plugin_controller->getList('', true);
+
+        if (!is_array($plugin_list)) {
+            $plugin_list = array();
+        }
+        $toc_plugins = array();
+
+        foreach ($plugin_list as $plugin) {
+
+            switch ($plugin) {
+                case 'explain':
+                    $toc_plugins['explain.conf'] = 'Explain';
+                    break;
+            }
+
+        }
+
+        $toc_items = array(
+            'config'    => $toc_configs,
+            'userstyle' => $toc_styles,
+            'hook'      => $toc_hooks,
+            'other'     => $toc_others,
+            'plugin'    => $toc_plugins,
+        );
+
+        if ($current_section) {
+            $this->allowedFiles = array_keys($toc_items[$current_section]);
+        }
+
+        if (!isset($toc_items[$tab])) {
+            return array();
+        }
+
+        return $toc_items[$tab];
+    }
+
+    /**
+     * Create an URL
+     *
+     * @param string $tab      tab to load, empty for current tab
+     * @param array  $params   associative array of parameter to set
+     * @param string $sep      seperator to build the URL
+     * @param bool   $absolute create absolute URLs?
+     * @return string
+     */
+    public function tabURL($tab = '', $params = array(), $sep = '&amp;', $absolute = false)
+    {
+        global $ID;
+
+        $defaults = array(
+            'do'   => 'admin',
+            'page' => 'advanced_config',
+            'tab'  => $tab,
+        );
+
+        return wl($ID, array_merge($defaults, $params), $absolute, $sep);
+    }
+
+    public function currentTab()
+    {
+        global $INPUT;
+
+        $tab = $INPUT->str('tab');
+
+        if (in_array($tab, array_keys($this->getTabs()))) {
+            return $tab;
+        }
+
+        return null;
+    }
+
+    public function getTOC()
+    {
+        global $ID;
+
+        foreach ($this->getTabs() as $section => $section_title) {
+
+            $toc[] = array(
+                'link'  => wl($ID, array(
+                    'do'   => 'admin',
+                    'page' => 'advanced_config',
+                    'tab'  => $section)
+                ),
+                'title' => $section_title,
+                'level' => 1,
+                'type'  => 'ul',
+            );
+
+        }
+
+        return $toc;
+    }
 
 }

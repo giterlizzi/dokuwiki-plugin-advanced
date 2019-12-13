@@ -1,0 +1,26 @@
+==== Access Control Lists (ACL)s ====
+
+ :!: **Please edit carefully** :!:
+
+Access restrictions are saved in a file called ''conf/acl.auth.php'', which should be writable by the webserver if you want to use the ACL admin interface described above. It is not recommended to edit this file manually. Use the admin interface instead.
+
+Empty lines and shell-style comments are ignored. Each line contains 3 whitespace separated fields:
+
+  * The resource to restrict. This can either be a [[doku>pagename]] or a [[doku>namespace]]. Namespaces are marked by an additional asterisk (see examples below).
+  * A group or user name. Groupnames are marked by a leading ''@'' character.
+  * A permission level (see below).
+
+There are 7 permission levels represented by an integer. Higher levels include lower ones. If you can edit you can read, too. However the //admin// permission of //255// can not be used in the ''conf/acl.auth.php'' file. It is only used internally by matching against the [[doku>config:superuser]] option.
+
+^ Name    ^ Level  ^ applies to ^ Permission ^ DokuWiki constant  ^
+| none    |  0  | pages, namespaces  | no permission---complete lock out  | AUTH_NONE  |
+| read    |  1  | pages, namespaces  | read permission  | AUTH_READ  |
+| edit    |  2  | pages, namespaces  | existing pages may be edited | AUTH_EDIT  |
+| create  |  4  | namespaces | new pages can be created | AUTH_CREATE  |
+| upload  |  8  | namespaces | mediafiles may be uploaded | AUTH_UPLOAD  |
+| delete  |  16   | namespaces | mediafiles may be overwritten or deleted | AUTH_DELETE  |
+| admin   |  255  | admin plugins  | superuser((see [[doku>config:superuser]])) can change admin settings  | AUTH_ADMIN |
+
+
+=== See also ===
+  * [[doku>acl]]
