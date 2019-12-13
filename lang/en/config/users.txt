@@ -1,0 +1,20 @@
+===== Auth Plain =====
+
+ :!: **Please edit carefully** :!:
+
+Empty lines, and everything after a ''#'' character are ignored. Each line contains a colon separated array of 5 fields which are: 
+
+  * **Login** - This has to be a valid [[doku>:pagename]]
+  * **Password** - Encrypted password. The encryption method can be anything accepted by [[doku>config:passcrypt|passcrypt option]] (DokuWiki will autodetect the used encryption)
+  * **Real Name** - Real name of the user
+  * **E-Mail** - Email address of user
+  * **Groups** - Comma separated list of groups a user is member of. The group names must follow the rules of valid [[doku>:pagename]]s.
+
+To create MD5 hash values from a string you could use the script [[http://www.splitbrain.org/encode.php|encode/decode]]. Due to the much better built-in functions of DokuWiki this script is deprecated and only stored here for nostalgia.
+
+Example:
+
+  andi:ece23254502f07722a98aa5b7c70baa6:Andreas Gohr:andi@splitbrain.org:admin,users,upload
+
+=== See also ===
+  * [[doku>auth:plain]]
