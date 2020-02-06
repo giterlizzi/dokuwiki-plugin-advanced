@@ -1,0 +1,8 @@
+==== Main Configuration ====
+
+ :!: **Please edit carefully** :!:
+
+The "system" options of DokuWiki will be found in the ''conf/dokuwiki.php'' file. However this file contains the "default" values of the system. To customize it, you should edit the file ''conf/local.php'' or create it if it doesn't exist. To find what you can configure within that file, see the list of available options below. 
+
+=== See also ===
+  * [[doku>config]]

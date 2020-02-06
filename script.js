@@ -4,37 +4,39 @@
  * Home      http://dokuwiki.org/plugin:advanced
  * Author    Giuseppe Di Terlizzi <giuseppe.diterlizzi@gmail.com>
  * License   GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * Copyright (C) 2016-2018, Giuseppe Di Terlizzi
+ * Copyright (C) 2016-2020, Giuseppe Di Terlizzi
  */
 
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
 
-  var $adv = jQuery('#plugin_advanced_config');
+    var $adv = jQuery('#plugin_advanced_config');
 
-  $adv.find('.expand-reduce').on('click', function(e) {
-    $adv.find('.default-config').toggle();
-    jQuery(this).text((jQuery(this).text() == '-') ? '+' : '-');
-  });
-
-  $adv.find('.purge-cache').on('click', function(e) {
-    var $btn = jQuery(this);
-    jQuery.get(DOKU_BASE + 'lib/exe/'+ $btn.data('purgeType') +'.php?purge=true').done(function(){
-      alert($btn.data('purgeMsg'));
+    $adv.find('.expand-reduce').on('click', function (e) {
+        var $self = jQuery(this);
+        var target = $self.data('target');
+        $adv.find(target).toggle();
+        $self.text(($self.text() == '[-]') ? '[+]' : '[-]');
     });
-  });
 
-  var $advanced_forms = jQuery('#plugin_advanced_export, #plugin_advanced_import');
+    $adv.find('.purge-cache').on('click', function (e) {
+        var $btn = jQuery(this);
+        jQuery.get(DOKU_BASE + 'lib/exe/' + $btn.data('purgeType') + '.php?purge=true').done(function () {
+            alert($btn.data('purgeMsg'));
+        });
+    });
 
-  $advanced_forms.find('.export-all-pages, .import-all-pages').on('click', function() {
+    var $advanced_forms = jQuery('#plugin_advanced_export, #plugin_advanced_import');
 
-    var $pages = $advanced_forms.find('table.pages tbody input[type=checkbox]');
+    $advanced_forms.find('.export-all-pages, .import-all-pages').on('click', function () {
 
-    if (jQuery(this).prop('checked')) {
-      $pages.prop('checked', true);
-    } else {
-      $pages.prop('checked', false);
-    }
+        var $pages = $advanced_forms.find('table.pages tbody input[type=checkbox]');
 
-  });
+        if (jQuery(this).prop('checked')) {
+            $pages.prop('checked', true);
+        } else {
+            $pages.prop('checked', false);
+        }
+
+    });
 
 });

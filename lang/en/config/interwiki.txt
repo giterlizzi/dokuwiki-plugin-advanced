@@ -4,6 +4,15 @@ The original idea of InterWiki was to have one large distributed Wiki over the w
 
 In DokuWiki this is done by prefixing Wiki pagenames with a shortcut separated by a ''>'' character (eg. ''<nowiki>[[wp>InterWiki]]</nowiki>'').
 
+Examples:
+
+| %%[[wp>InterWiki]]%%    | [[wp>InterWiki]]    | links to the English language Wikipedia |
+| %%[[phpfn>random]]%%    | [[phpfn>random]]    | links to a function in the PHP manual |
+| %%[[google>Wiki]]%%     | [[google>Wiki]]     | links to a Google search |
+| %%[[doku>interwiki]]%%  | [[doku>interwiki]]  | links to the DokuWiki wiki |
+| %%[[skype>echo123]]%%   | [[skype>echo123]]   | Links that opens Skype, ready to call Skype Test Call (echo123) |
+| %%[[this>feed.php]]%%   | [[this>feed.php]]   | links to your wiki's URL. The example links to the local [[doku>syndication|XML feed]]. ''%%[[this>]]%%'' is a special case and the only interwiki link which **cannot be configured** through any config file. |
+
 The format of the interwiki config file is:
 
   <shortcut>      <url to wiki>

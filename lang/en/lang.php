@@ -6,11 +6,9 @@
  * @author     Giuseppe Di Terlizzi <giuseppe.diterlizzi@gmail.com>, Vincent Lecomte
  */
 
-
-$lang['menu_config'] = 'DokuWiki Advanced: Configuration';
-$lang['menu_export'] = 'DokuWiki Advanced: Export Utility';
-$lang['menu_import'] = 'DokuWiki Advanced: Import Utility';
-
+$lang['menu_config'] = 'Advanced: Configuration';
+$lang['menu_export'] = 'Advanced: Export Utility';
+$lang['menu_import'] = 'Advanced: Import Utility';
 
 $lang['adv_select_all_pages'] = 'Select all pages';
 
@@ -36,7 +34,6 @@ $lang['adv_imp_upload_backup']        = 'Upload backup file';
 $lang['adv_imp_zip_extract_error']    = 'Error during archive export';
 $lang['adv_imp_zip_not_found']        = 'Import archive not found';
 
-
 $lang['adv_conf_abbrev']    = 'Abbreviations and Acronyms';
 $lang['adv_conf_entities']  = 'Entities';
 $lang['adv_conf_iwiki']     = 'InterWiki Links';
@@ -44,6 +41,7 @@ $lang['adv_conf_blacklist'] = 'Blacklist';
 $lang['adv_conf_scheme']    = 'URL Schemes';
 $lang['adv_conf_smiley']    = 'Smileys';
 $lang['adv_conf_mime']      = 'MIME Types';
+$lang['adv_conf_main']      = 'Main Configuration';
 
 $lang['adv_conf_header']    = 'Header';
 $lang['adv_conf_footer']    = 'Footer';
@@ -51,9 +49,9 @@ $lang['adv_conf_sidebar']   = 'Sidebar';
 $lang['adv_conf_rsidebar']  = 'Right Sidebar';
 $lang['adv_conf_topheader'] = 'Top Header';
 
-$lang['adv_conf_ujs']       = 'User JavaScript';
-$lang['adv_conf_hooks']     = 'Template Hooks';
-$lang['adv_conf_others']    = 'Others';
+$lang['adv_conf_ujs']    = 'User JavaScript';
+$lang['adv_conf_hooks']  = 'Template Hooks';
+$lang['adv_conf_others'] = 'Others';
 
 $lang['adv_conf_blacklist_update']   = 'Blacklist update successfull !';
 $lang['adv_conf_blacklist_failed']   = 'Blacklist update failed !';
@@ -62,7 +60,6 @@ $lang['adv_conf_blacklist_download'] = 'Update list from MediaWiki';
 $lang['adv_conf_file_save_success'] = 'File %s saved successfull!';
 $lang['adv_conf_file_save_fail']    = 'Unable to save %s file!';
 
-$lang['adv_conf_edit']    = 'Edit';
-$lang['adv_conf_default'] = 'Default';
-$lang['adv_conf_cache_purged']  = 'Cache purged!';
-
+$lang['adv_conf_edit']         = 'Edit';
+$lang['adv_conf_default']      = 'Default';
+$lang['adv_conf_cache_purged'] = 'Cache purged!';
