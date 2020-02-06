@@ -1,0 +1,25 @@
+==== Configuration files ====
+
+All configuration files are to be found in the ''./conf'' folder or ''/etc/dokuwiki'' when installed from a Debian package.
+
+"Main files" usually ship with DokuWiki, whereas "local files" have to be created by the wiki admin. 
+
+If local files are supported you should use them instead of modifying the main files to avoid upgrade troubles.
+
+
+^ main file                 ^ local file                                         ^ type of config             ^ quick info                             ^
+| ''dokuwiki.php''          | ''local.php''\\ ''local.protected.php''            | see [[doku>config#configuration_options|config]] | general wiki configuration             |
+| ''acronyms.conf''         | ''acronyms.local.conf''                            | [[doku>abbreviations]]     | automatic abbreviation hints           |
+| ''entities.conf''         | ''entities.local.conf''                            | [[doku>entities]]          | automatic text replacements            |
+| ''interwiki.conf''        | ''interwiki.local.conf''                           | [[doku>interwiki]]         | interwiki shortcut links               |
+| ''mime.conf''             | ''mime.local.conf''                                | [[doku>mime]]              | mime type settings for uploads         |
+| ''smileys.conf''          | ''smileys.local.conf''                             | [[doku>smileys]]           | image replacements                     |
+|                           | ''acl.auth.php''                                   | see [[doku>acl]]           | Access Control settings                |
+|                           | ''users.auth.php''                                 | see [[doku>acl]]           | Users and passwords                    |
+| ''license.php''           | ''license.local.php''                              | [[doku>config:license]]    | list of available licenses             |
+| ''scheme.conf''           | ''scheme.local.conf''                              | [[doku>urlschemes]]        | URL schemes to be recognized as links  |
+| ''mediameta.php''         |                                                    | [[doku>exif]]              | Metadata editable for images           |
+| ''wordblock.conf''        | ''wordblock.local.conf''                           | [[doku>blacklist]]         | Spam blacklist                         |
+| ''plugins.required.php''  | ''plugins.local.php''\\ ''plugins.protected.php''  | see [[doku>config#enabling_disabling_plugins|config]] | Enabling/disabling plugins             |
+|                           | ''userscript.js''                                  | [[doku>devel:javascript]]  | Custom JavaScript enhancements         |
+|                           | ''userstyle.css''                                  | [[doku>devel:css]]         | Custom CSS enhancements                |

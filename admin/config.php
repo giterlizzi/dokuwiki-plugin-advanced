@@ -79,8 +79,9 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
         $file = $INPUT->str('file');
         $tab  = $INPUT->str('tab');
 
-        $file_local   = null;
-        $file_default = null;
+        $file_local     = null;
+        $file_default   = null;
+        $file_protected = null;
 
         if (!$file || !$tab) {
             return array();
@@ -89,9 +90,12 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
         switch ($tab) {
 
             case 'config':
-                $configs      = $config_cascade[$file];
-                $file_default = @$configs['default'][0];
-                $file_local   = @$configs['local'][0];
+
+                $configs = $config_cascade[$file];
+
+                $file_default   = @$configs['default'][0];
+                $file_local     = @$configs['local'][0];
+                $file_protected = @$configs['protected'][0];
                 break;
 
             case 'userstyle':
@@ -155,14 +159,18 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
         }
 
         $file_info = array(
-            'tab'             => $tab,
-            'file'            => $file,
-            'default'         => $file_default,
-            'local'           => $file_local,
-            'localName'       => basename($file_local),
-            'defaultName'     => basename($file_default),
-            'localLastModify' => (file_exists($file_local) ? strftime($conf['dformat'], filemtime($file_local)) : ''),
-            'help'            => 'config/' . (($tab == 'hook') ? 'hooks' : $file),
+            'tab'                   => $tab,
+            'file'                  => $file,
+            'default'               => $file_default,
+            'local'                 => $file_local,
+            'protected'             => $file_protected,
+            'local_name'            => basename($file_local),
+            'default_name'          => basename($file_default),
+            'protected_name'        => basename($file_protected),
+            'local_last_modify'     => (file_exists($file_local)      ? strftime($conf['dformat'], filemtime($file_local)) : ''),
+            'protected_last_modify' => (file_exists($file_protected) ? strftime($conf['dformat'], filemtime($file_protected)) : ''),
+            'default_last_modify'   => (file_exists($file_default)   ? strftime($conf['dformat'], filemtime($file_default)) : ''),
+            'help'                  => 'config/' . (($tab == 'hook') ? 'hooks' : $file),
         );
 
         return $file_info;
@@ -219,38 +227,43 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
 
     }
 
-    private function help()
+    private function help($file)
     {
-
-        echo '<div class="help">';
-        echo $this->locale_xhtml($this->fileInfo['help']);
-        echo '</div>';
-        echo '<p>&nbsp;</p>';
-
+        echo $this->locale_xhtml($file);
         return true;
-
     }
 
     private function getDefault()
     {
 
+        $this->getDefaultConfig('default');
+        $this->getDefaultConfig('protected');
+
+    }
+
+    private function getDefaultConfig($file)
+    {
+
         $file_info = $this->fileInfo;
 
-        if (!$file_info['default'] || !file_exists($file_info['default'])) {
+        if (!$file_info[$file]) {
             return;
         }
 
-        $file_name   = $file_info['defaultName'];
-        $file_path   = $file_info['default'];
-        $lng_default = $this->getLang('adv_conf_default');
+        $file_name = $file_info[$file . '_name'];
+        $file_path = $file_info[$file];
+        $file_lastmod = $file_info[$file . '_last_modify'];
 
-        echo '<h3><a class="expand-reduce" href="javascript:void(0)" style="font-family:monospace; text-decoration:none">[+]</a> ' . "$lng_default $file_name</h3>";
-        echo '<div class="default-config" style="display:none">';
+        echo '<h3><a class="expand-reduce" data-target=".'.$file.'-config" href="javascript:void(0)" style="font-family:monospace; text-decoration:none">[+]</a> ' . "$file_name</h3>";
+        echo '<div class="'.$file.'-config" style="display:none">';
         echo '<textarea class="edit" rows="15" cols="" disabled="disabled">';
         echo hsc(io_readFile($file_path));
         echo '</textarea>';
+        echo '<p class="docInfo small pull-right">';
+        echo (file_exists($file_path) ? ' · ' . $lang['lastmod'] . ' ' . $file_lastmod : '');
+        echo '</p>';
         echo '<p class="docInfo small pull-right">' . $file_path . '</p>';
-        echo '</div><p>&nbsp;</p>';
+        echo '</div>';
 
         return true;
 
@@ -264,8 +277,8 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
         $file_info    = $this->fileInfo;
         $file_path    = $file_info['local'];
         $file_data    = (file_exists($file_path) ? io_readFile($file_path) : '');
-        $file_lastmod = $file_info['localLastModify'];
-        $file_name    = $file_info['localName'];
+        $file_lastmod = $file_info['local_last_modify'];
+        $file_name    = $file_info['local_name'];
 
         $lng_edit = $this->getLang('adv_conf_edit');
         $lng_upd  = $this->getLang('adv_conf_blacklist_download');
@@ -351,10 +364,15 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
 
         }
 
+        if ($current_tab == 'config' && ! isset($file_info['file'])) {
+            $this->help('config');
+        }
+
         if (isset($file_info['file']) && in_array($file_info['file'], $this->allowedFiles)) {
 
-            $this->help();
-            $this->getDefault();
+            $this->help($file_info['help']);
+            $this->getDefaultConfig('default');
+            $this->getDefaultConfig('protected');
             $this->editForm();
 
         }
@@ -391,7 +409,8 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
             'smileys'   => $this->getLang('adv_conf_smiley'),
             'scheme'    => $this->getLang('adv_conf_scheme'),
             'wordblock' => $this->getLang('adv_conf_blacklist'),
-            'main'      => 'Main',
+            'main'      => $this->getLang('adv_conf_main'),
+            'plugins'   => 'Plugins',
         );
 
         // User Style

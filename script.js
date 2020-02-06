@@ -4,7 +4,7 @@
  * Home      http://dokuwiki.org/plugin:advanced
  * Author    Giuseppe Di Terlizzi <giuseppe.diterlizzi@gmail.com>
  * License   GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * Copyright (C) 2016-2018, Giuseppe Di Terlizzi
+ * Copyright (C) 2016-2020, Giuseppe Di Terlizzi
  */
 
 jQuery(document).ready(function () {
@@ -12,8 +12,10 @@ jQuery(document).ready(function () {
     var $adv = jQuery('#plugin_advanced_config');
 
     $adv.find('.expand-reduce').on('click', function (e) {
-        $adv.find('.default-config').toggle();
-        jQuery(this).text((jQuery(this).text() == '[-]') ? '[+]' : '[-]');
+        var $self = jQuery(this);
+        var target = $self.data('target');
+        $adv.find(target).toggle();
+        $self.text(($self.text() == '[-]') ? '[+]' : '[-]');
     });
 
     $adv.find('.purge-cache').on('click', function (e) {
