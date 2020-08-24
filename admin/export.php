@@ -109,10 +109,10 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
 
         search($namespaces, $conf['datadir'], 'search_namespaces', $options, '');
 
-        echo sprintf('<h3>%s</h3>', $this->getLang('adv_exp_select_namespace'));
+        echo sprintf('<h3>%s</h3>', $this->getLang('exp_select_namespace'));
 
         echo '<p><select name="ns" class="form-control">';
-        echo '<option value="">' . $this->getLang('adv_exp_select_namespace') . '</option>';
+        echo '<option value="">' . $this->getLang('exp_select_namespace') . '</option>';
         echo '<option value="(root)">(root)</option>';
 
         foreach ($namespaces as $namespace) {
@@ -125,9 +125,9 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
         echo '<input type="hidden" name="step" value="select-ns" />';
 
         echo '<p class="pull-right">';
-        echo sprintf('<label><input type="checkbox" name="include-sub-ns" /> %s</label> ', $this->getLang('adv_exp_include_sub_namespaces'));
-        echo sprintf('<button type="submit" name="cmd[export]" class="btn btn-default">%s &rarr;</button> ', $this->getLang('adv_exp_export_all_pages_in_namespace'));
-        echo sprintf('<button type="submit" name="export[select_pages]" class="btn btn-primary primary">%s &rarr;</button> ', $this->getLang('adv_exp_select_pages'));
+        echo sprintf('<label><input type="checkbox" name="include-sub-ns" /> %s</label> ', $this->getLang('exp_include_sub_namespaces'));
+        echo sprintf('<button type="submit" name="cmd[export]" class="btn btn-default">%s &rarr;</button> ', $this->getLang('exp_export_all_pages_in_namespace'));
+        echo sprintf('<button type="submit" name="export[select_pages]" class="btn btn-primary primary">%s &rarr;</button> ', $this->getLang('exp_select_pages'));
         echo '</p>';
 
     }
@@ -165,20 +165,20 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
         $namespace = str_replace(':', '/', $INPUT->str('ns'));
 
         if (!$namespace) {
-            msg($this->getLang('adv_exp_no_namespace_selected'), -1);
+            msg($this->getLang('exp_no_namespace_selected'), -1);
             $this->step_select_ns();
             return 0;
         }
 
         $pages = $this->getPagesFromNamespace($INPUT->str('ns'), ($INPUT->str('include-sub-ns') ? 1 : 0));
 
-        echo sprintf('<h3>%s</h3>', $this->getLang('adv_exp_select_pages'));
+        echo sprintf('<h3>%s</h3>', $this->getLang('exp_select_pages'));
         echo sprintf('<input type="hidden" value="%s" name="ns" />', $INPUT->str('ns'));
 
         echo '<table class="table inline pages" width="100%">';
         echo '<thead>
       <tr>
-        <th width="10"><input type="checkbox" class="export-all-pages" title="' . $this->getLang('adv_select_all_pages') . '" /></th>
+        <th width="10"><input type="checkbox" class="export-all-pages" title="' . $this->getLang('select_all_pages') . '" /></th>
         <th>Page</th>
         <th>Created</th>
         <th>Modified</th>
@@ -221,7 +221,7 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
 
         echo '<p class="pull-right">';
         echo sprintf('<button type="submit" name="export[select_ns]" class="btn btn-default">&larr; %s</button> ', $lang['btn_back']);
-        echo sprintf('<button type="submit" name="cmd[export]" class="btn btn-primary primary">%s &rarr;</button>', $this->getLang('adv_btn_export'));
+        echo sprintf('<button type="submit" name="cmd[export]" class="btn btn-primary primary">%s &rarr;</button>', $this->getLang('btn_export'));
         echo '</p>';
 
     }

@@ -1,0 +1,39 @@
+==== Template style.ini ====
+
+The ''style.ini'' is a [[wp>INI_file|ini file]] in each [[doku>template]]'s directory((if the template supports it)) configuring the generation of [[doku>devel:css|CSS]] styles. It has two sections: [stylesheets] and [replacements] described below.
+
+=== [stylesheets] ===
+
+This part defines which CSS files are loaded. Each line is defined as follow:
+
+  cssfile.css = mode
+
+''cssfile.css'' is your file name and ''mode'' is one of the supported output modes as described at [[CSS#Stylesheet Modes|mode]].
+
+The stylesheet can also be a ''.less'' file. (See [[doku>devel:less|LESS]]).
+
+=== [replacements] ===
+
+DokuWiki's CSS dispatcher is able to replace placeholders in the loaded stylesheets which are configured through the ''[replacements]'' section in the templates ''style.ini''. This is especially useful for defining a color scheme once and reuse these colors in all files.
+
+These replacements can also be used as [[doku>devel:less#accessing_styleini_placeholders|LESS variables]].
+
+== Guaranteed color placeholders ==
+
+The following placeholders are the only ones that are safe to be used by plugins. All templates have to implement these at least, but are free to add more.
+
+^placeholder variable		^meaning			^
+^''%%__background__%%''		|main background color		|
+^''%%__background_alt__%%''	|alternative background color	|
+^''%%__background_neu__%%''	|neutral background color	|
+^''%%__border__%%''		|border color			|
+^''%%__text__%%''		|main text color		|
+^''%%__text_alt__%%''		|alternative text color		|
+^''%%__text_neu__%%''		|neutral text color		|
+^''%%__highlight__%%''		|highlighted text color (**new** since Adora Belle) |
+^''%%__link__%%''		|the general link color (**new** since Greebo) |
+
+Template authors should generally try to reuse the placeholder names of the default template.
+
+=== See also ===
+  * [[doku>devel:style.ini]]

@@ -11,12 +11,8 @@ jQuery(document).ready(function () {
 
     var $adv = jQuery('#plugin_advanced_config');
 
-    $adv.find('.expand-reduce').on('click', function (e) {
-        var $self = jQuery(this);
-        var target = $self.data('target');
-        $adv.find(target).toggle();
-        $self.text(($self.text() == '[-]') ? '[+]' : '[-]');
-    });
+    dw_page.makeToggle('.config_default h3', '.config_default > div', -1);
+    dw_page.makeToggle('.config_protected h3', '.config_protected > div', -1);
 
     $adv.find('.purge-cache').on('click', function (e) {
         var $btn = jQuery(this);

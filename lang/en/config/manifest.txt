@@ -1,0 +1,15 @@
+==== Progressive Web App Manifest ====
+
+DokuWiki sends out a manifest.json, which allows mobile users to add the wiki as a web app to their homescreen.
+
+This manifest.json can be customized in multiple ways:
+
+  - it can be deactivated by adding ''manifest'' to the "[[doku>config:disableactions]]" config option
+  - it can be overwritten by values set in a ''manifest.local.json'' in the ''conf'' directory which will be loaded according to the config cascade
+  - it uses several configurable parameters, if they are not overwritten by the point above: [[doku>config:title|config:title]], [[doku>config:tagline|config:tagline]], the ''%%__background__%%'' and ''%%__theme_color__%%'' or ''%%__background_alt__%%'' replacements
+  - if no icons are defined in a manifest.local.json, it looks for some svg logos and uses the first it finds: '':wiki:logo.svg'', '':logo.svg'' or '':wiki:dokuwiki.svg''
+
+=== See Also ===
+
+  * [[doku>devel:event:manifest_send|MANIFEST_SEND]]
+  * https://developer.mozilla.org/en-US/docs/Web/Manifest

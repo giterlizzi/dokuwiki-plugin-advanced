@@ -123,38 +123,36 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
 
         }
 
-        if ($tab == 'other') {
+        switch ($file) {
 
-            switch ($file) {
+            case 'styleini':
+                $file_local   = str_replace('%TEMPLATE%', $conf['template'], $file_local);
+                $file_default = str_replace('%TEMPLATE%', $conf['template'], $file_default);
+                break;
+            case 'acl':
+                $file_local   = DOKU_CONF . 'acl.auth.php';
+                $file_default = DOKU_CONF . 'acl.auth.php.dist';
+                break;
 
-                case 'acl':
-                    $file_local   = DOKU_CONF . 'acl.auth.php';
-                    $file_default = DOKU_CONF . 'acl.auth.php.dist';
-                    break;
+            case 'users':
+                $file_local   = DOKU_CONF . 'users.auth.php';
+                $file_default = DOKU_CONF . 'users.auth.php.dist';
+                break;
 
-                case 'users':
-                    $file_local   = DOKU_CONF . 'users.auth.php';
-                    $file_default = DOKU_CONF . 'users.auth.php.dist';
-                    break;
+            case 'htaccess':
+                $file_default = DOKU_INC . '.htaccess.dist';
+                $file_local   = DOKU_INC . '.htaccess';
+                break;
 
-                case 'htaccess':
-                    $file_default = DOKU_INC . '.htaccess.dist';
-                    $file_local   = DOKU_INC . '.htaccess';
-                    break;
-
-                case 'userscript':
-                    $configs = $config_cascade['userscript'];
-                    if (is_array(@$configs['default'])) {
-                        $file_local = @$configs['default'][0];
-                    } else {
-                        $file_local = @$configs['default'];
-                    }
-                    break;
-
-                default:
-                    $file_local = DOKU_CONF . $file;
-
-            }
+            case 'userscript':
+                $configs = $config_cascade['userscript'];
+                if (is_array(@$configs['default'])) {
+                    $file_local = @$configs['default'][0];
+                } else {
+                    $file_local = @$configs['default'];
+                }
+                $file_default = null;
+                break;
 
         }
 
@@ -167,10 +165,10 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
             'local_name'            => basename($file_local),
             'default_name'          => basename($file_default),
             'protected_name'        => basename($file_protected),
-            'local_last_modify'     => (file_exists($file_local)      ? strftime($conf['dformat'], filemtime($file_local)) : ''),
-            'protected_last_modify' => (file_exists($file_protected) ? strftime($conf['dformat'], filemtime($file_protected)) : ''),
-            'default_last_modify'   => (file_exists($file_default)   ? strftime($conf['dformat'], filemtime($file_default)) : ''),
-            'help'                  => 'config/' . (($tab == 'hook') ? 'hooks' : $file),
+            'local_last_modify'     => (file_exists($file_local) ? dformat(filemtime($file_local)) : ''),
+            'protected_last_modify' => (file_exists($file_protected) ? dformat(filemtime($file_protected)) : ''),
+            'default_last_modify'   => (file_exists($file_default) ? dformat(filemtime($file_default)) : ''),
+            'help'                  => 'config/' . $file,
         );
 
         return $file_info;
@@ -201,10 +199,10 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
                 io_saveFile($file_backup, $content_old);
             }
             // Create a backup
-            msg(sprintf($this->getLang('adv_conf_file_save_success'), $file_name), 1);
+            msg(sprintf($this->getLang('conf_file_save_success'), $file_name), 1);
 
         } else {
-            msg(sprintf($this->getLang('adv_conf_file_save_fail'), $file_name), -1);
+            msg(sprintf($this->getLang('conf_file_save_fail'), $file_name), -1);
         }
 
     }
@@ -212,17 +210,21 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
     public function cmd_wordblock_update()
     {
 
-        $file_info = $this->getFileInfo();
+        $file_info     = $this->getFileInfo();
+        $blacklist_url = 'https://meta.wikimedia.org/wiki/Spam_blacklist?action=raw';
 
-        $http      = new DokuHTTPClient();
-        $blacklist = $http->get('https://meta.wikimedia.org/wiki/Spam_blacklist?action=raw');
+        $http             = new DokuHTTPClient();
+        $http->timeout    = 25;
+        $http->keep_alive = false;
+
+        $blacklist = $http->get($blacklist_url);
         $blacklist = trim(preg_replace('/#(.*)$/m', '', $blacklist)); # Remove all comments from file
         $blacklist = trim(preg_replace('/[\n]+/m', "\n", $blacklist)); # Remove multiple new line
 
         if (io_saveFile($file_info['local'], $blacklist)) {
-            msg($this->getLang('adv_conf_blacklist_update'), 1);
+            msg($this->getLang('conf_blacklist_update'), 1);
         } else {
-            msg($this->getLang('adv_conf_blacklist_failed'), -1);
+            msg($this->getLang('conf_blacklist_failed'), -1);
         }
 
     }
@@ -243,6 +245,7 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
 
     private function getDefaultConfig($file)
     {
+        global $lang;
 
         $file_info = $this->fileInfo;
 
@@ -250,19 +253,21 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
             return;
         }
 
-        $file_name = $file_info[$file . '_name'];
-        $file_path = $file_info[$file];
+        $file_name    = $file_info[$file . '_name'];
+        $file_path    = $file_info[$file];
         $file_lastmod = $file_info[$file . '_last_modify'];
 
-        echo '<h3><a class="expand-reduce" data-target=".'.$file.'-config" href="javascript:void(0)" style="font-family:monospace; text-decoration:none">[+]</a> ' . "$file_name</h3>";
-        echo '<div class="'.$file.'-config" style="display:none">';
+        echo '<div class="config_' . $file . '">';
+        echo '<h3>' . "$file_name</h3>";
+        echo '<div class="content">';
         echo '<textarea class="edit" rows="15" cols="" disabled="disabled">';
         echo hsc(io_readFile($file_path));
         echo '</textarea>';
         echo '<p class="docInfo small pull-right">';
+        echo $file_path;
         echo (file_exists($file_path) ? ' · ' . $lang['lastmod'] . ' ' . $file_lastmod : '');
         echo '</p>';
-        echo '<p class="docInfo small pull-right">' . $file_path . '</p>';
+        echo '</div>';
         echo '</div>';
 
         return true;
@@ -280,8 +285,8 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
         $file_lastmod = $file_info['local_last_modify'];
         $file_name    = $file_info['local_name'];
 
-        $lng_edit = $this->getLang('adv_conf_edit');
-        $lng_upd  = $this->getLang('adv_conf_blacklist_download');
+        $lng_edit = $this->getLang('conf_edit');
+        $lng_upd  = $this->getLang('conf_blacklist_download');
 
         echo "<h3>$lng_edit $file_name</h3>";
 
@@ -308,7 +313,7 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
 
             $purge_type = (($file_info['tab'] == 'userstyle') ? 'css' : 'js');
 
-            echo '<button type="button" class="primary btn btn-default purge-cache" data-purge-msg="' . $this->getLang('adv_conf_cache_purged') . '" data-purge-type="' . $purge_type . '">' . $this->getLang("adv_btn_purge_$purge_type") . '</button> ';
+            echo '<button type="button" class="primary btn btn-default purge-cache" data-purge-msg="' . $this->getLang('conf_cache_purged') . '" data-purge-type="' . $purge_type . '">' . $this->getLang("btn_purge_$purge_type") . '</button> ';
 
         }
 
@@ -364,13 +369,22 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
 
         }
 
-        if ($current_tab == 'config' && ! isset($file_info['file'])) {
+        if ($current_tab == 'config' && !isset($file_info['file'])) {
             $this->help('config');
+        }
+
+        if ($current_tab == 'userstyle' && !isset($file_info['file'])) {
+            $this->help('config/userstyle');
+        }
+
+        if ($current_tab == 'hook' && !isset($file_info['file'])) {
+            $this->help('config/hooks');
         }
 
         if (isset($file_info['file']) && in_array($file_info['file'], $this->allowedFiles)) {
 
             $this->help($file_info['help']);
+            echo '<p>&nbsp;</p>';
             $this->getDefaultConfig('default');
             $this->getDefaultConfig('protected');
             $this->editForm();
@@ -385,11 +399,10 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
     {
 
         return array(
-            'config'    => 'Configuration',
-            'userstyle' => 'Style',
-            'hook'      => $this->getLang('adv_conf_hooks'),
-            'plugin'    => 'Plugins',
-            'other'     => $this->getLang('adv_conf_others'),
+            'config'    => $this->getLang('conf_tab_configurations'),
+            'userstyle' => $this->getLang('conf_tab_styles'),
+            'hook'      => $this->getLang('conf_tab_hooks'),
+            'other'     => $this->getLang('conf_tab_others'),
         );
     }
 
@@ -402,15 +415,19 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
 
         // DokuWiki config
         $toc_configs = array(
-            'acronyms'  => $this->getLang('adv_conf_abbrev'),
-            'entities'  => $this->getLang('adv_conf_entities'),
-            'interwiki' => $this->getLang('adv_conf_iwiki'),
-            'mime'      => $this->getLang('adv_conf_mime'),
-            'smileys'   => $this->getLang('adv_conf_smiley'),
-            'scheme'    => $this->getLang('adv_conf_scheme'),
-            'wordblock' => $this->getLang('adv_conf_blacklist'),
-            'main'      => $this->getLang('adv_conf_main'),
-            'plugins'   => 'Plugins',
+            'acronyms'   => $this->getLang('conf_abbrev'),
+            'entities'   => $this->getLang('conf_entities'),
+            'interwiki'  => $this->getLang('conf_iwiki'),
+            'mime'       => $this->getLang('conf_mime'),
+            'smileys'    => $this->getLang('conf_smiley'),
+            'scheme'     => $this->getLang('conf_scheme'),
+            'wordblock'  => $this->getLang('conf_blacklist'),
+            'license'    => $this->getLang('conf_license'),
+            'main'       => $this->getLang('conf_main'),
+            'manifest'   => $this->getLang('conf_manifest'),
+            'plugins'    => $this->getLang('conf_plugins'),
+            'styleini'   => $this->getLang('conf_styleini'),
+            'userscript' => $this->getLang('conf_ujs'),
         );
 
         // User Style
@@ -424,26 +441,25 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
         // Template Hooks
         $toc_hooks = array(
             'meta'          => 'Meta',
-            'sidebarheader' => $this->getLang('adv_conf_sidebar') . ' (' . $this->getLang('adv_conf_header') . ')',
-            'sidebarfooter' => $this->getLang('adv_conf_sidebar') . ' (' . $this->getLang('adv_conf_footer') . ')',
-            'pageheader'    => 'Page (' . $this->getLang('adv_conf_header') . ')',
-            'pagefooter'    => 'Page (' . $this->getLang('adv_conf_footer') . ')',
-            'header'        => $this->getLang('adv_conf_header'),
-            'footer'        => $this->getLang('adv_conf_footer'),
+            'sidebarheader' => $this->getLang('conf_sidebar') . ' (' . $this->getLang('conf_header') . ')',
+            'sidebarfooter' => $this->getLang('conf_sidebar') . ' (' . $this->getLang('conf_footer') . ')',
+            'pageheader'    => 'Page (' . $this->getLang('conf_header') . ')',
+            'pagefooter'    => 'Page (' . $this->getLang('conf_footer') . ')',
+            'header'        => $this->getLang('conf_header'),
+            'footer'        => $this->getLang('conf_footer'),
         );
 
         // Other config
         $toc_others = array(
-            'userscript' => $this->getLang('adv_conf_ujs'),
-            'htaccess'   => '.htaccess',
+            'htaccess' => '.htaccess',
         );
 
         if ($conf['useacl']) {
-            $toc_others['acl'] = 'ACL';
+            $toc_configs['acl'] = 'ACL';
         }
 
         if ($conf['authtype'] == 'authplain') {
-            $toc_others['users'] = 'Users';
+            $toc_configs['users'] = 'Users';
         }
 
         // Specific Template Hooks
@@ -451,9 +467,9 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
 
             case 'bootstrap3':
 
-                $toc_hooks['topheader']          = $this->getLang('adv_conf_topheader');
-                $toc_hooks['rightsidebarheader'] = $this->getLang('adv_conf_rsidebar') . ' (' . $this->getLang('adv_conf_header') . ')';
-                $toc_hooks['rightsidebarfooter'] = $this->getLang('adv_conf_rsidebar') . ' (' . $this->getLang('adv_conf_footer') . ')';
+                $toc_hooks['topheader']          = $this->getLang('conf_topheader');
+                $toc_hooks['rightsidebarheader'] = $this->getLang('conf_rsidebar') . ' (' . $this->getLang('conf_header') . ')';
+                $toc_hooks['rightsidebarfooter'] = $this->getLang('conf_rsidebar') . ' (' . $this->getLang('conf_footer') . ')';
                 $toc_hooks['social']             = 'Social';
 
                 $toc_others['bootstrap3.themes.conf'] = 'Bootstrap3 NS Themes';
@@ -467,6 +483,7 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
         if (!is_array($plugin_list)) {
             $plugin_list = array();
         }
+
         $toc_plugins = array();
 
         foreach ($plugin_list as $plugin) {

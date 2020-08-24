@@ -1,0 +1,17 @@
+==== CSS Stylesheets ====
+
+Most of DokuWiki's presentation can be controlled through CSS stylesheets. DokuWiki defines some very minimal styles itself. The rest of the CSS definitions come from the [[doku>template]] and [[doku>plugins]] used.
+
+All CSS files are fetched through a single dispatcher in [[xref>lib/exe/css.php]] which also handles caching, pattern replacement, [[doku>devel:less|LESS]] preprocessing and optimizing. The loading of the stylesheets amongst other things is done via the ''tpl_metaheaders()'' function, so don't forget to have it within your template.
+
+=== Stylesheet Modes ===
+
+There are five types of stylesheet modes:
+
+  * **screen**: This is used when displaying pages in the web browser
+  * **print**: Definitions here will be used for printing pages
+  * **all**: Applied in all display modes
+  * **feed**: Applied when displaying the [[doku>:syndication|feed]]
+
+=== See also ===
+  * [[doku>devel:css]]

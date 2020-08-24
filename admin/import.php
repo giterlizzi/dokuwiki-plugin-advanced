@@ -90,7 +90,7 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
         global $INPUT;
         global $conf;
 
-        $extract_dir     = tempnam($conf['tmpdir'], 'import');
+        $extract_dir     = io_mktmpdir();
         $archive_file    = $INPUT->str('file');
         $overwrite_pages = ($INPUT->str('overwrite-existing-pages') == 'on' ? true : false);
         $files           = array_keys($INPUT->arr('files'));
@@ -102,22 +102,19 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
         }
 
         if (!file_exists($archive_file)) {
-            msg($this->getLang('adv_imp_zip_not_found'), -1);
+            msg($this->getLang('imp_zip_not_found'), -1);
             return 0;
         }
-
-        unlink($extract_dir);
-        mkdir($extract_dir, 0755);
 
         $Zip = new ZipLib;
 
         if (!$Zip->extract($archive_file, $extract_dir)) {
-            msg($this->getLang('adv_imp_zip_extract_error'), -1);
+            msg($this->getLang('imp_zip_extract_error'), -1);
             return 0;
         }
 
         if (!count($files)) {
-            msg($this->getLang('adv_imp_no_page_selected'), -1);
+            msg($this->getLang('imp_no_page_selected'), -1);
             return 0;
         }
 
@@ -126,10 +123,10 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
             $wiki_page = str_replace('/', ':', preg_replace('/\.txt$/', '', $file));
             $wiki_page = cleanID("$ns:$wiki_page");
 
-            $sum = $this->getLang('adv_imp_page_summary');
+            $sum = $this->getLang('imp_page_summary');
 
             if (page_exists($wiki_page) && !$overwrite_pages) {
-                msg(sprintf($this->getLang('adv_imp_page_already_exists'), $wiki_page), 2);
+                msg(sprintf($this->getLang('imp_page_already_exists'), $wiki_page), 2);
                 continue;
             }
 
@@ -156,7 +153,7 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
         io_rmdir($extract_dir, true);
 
         if (count($imported_pages)) {
-            msg($this->getLang('adv_imp_pages_import_success'));
+            msg($this->getLang('imp_pages_import_success'));
         }
 
     }
@@ -185,7 +182,7 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
         echo '<p>&nbsp;</p>';
 
         echo '<p class="pull-right">';
-        echo sprintf('<button type="submit" name="import[upload_backup]" class="btn btn-primary primary">%s &rarr;</button> ', $this->getLang('adv_imp_upload_backup'));
+        echo sprintf('<button type="submit" name="import[upload_backup]" class="btn btn-primary primary">%s &rarr;</button> ', $this->getLang('imp_upload_backup'));
         echo '</p>';
 
     }
@@ -204,10 +201,10 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
 
         search($namespaces, $conf['datadir'], 'search_namespaces', $options, '');
 
-        echo sprintf('<h3>1. %s</h3>', $this->getLang('adv_imp_select_namespace'));
+        echo sprintf('<h3>1. %s</h3>', $this->getLang('imp_select_namespace'));
 
         echo '<p><select name="ns" class="form-control" required="required">';
-        echo sprintf('<option>%s</option>', $this->getLang('adv_imp_select_namespace'));
+        echo sprintf('<option>%s</option>', $this->getLang('imp_select_namespace'));
         echo '<option value="(root)" selected="selected">(root)</option>';
 
         foreach ($namespaces as $namespace) {
@@ -217,14 +214,14 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
         echo '</select></p>';
         echo '<p>&nbsp;</p>';
 
-        echo sprintf('<h3>2. %s</h3>', $this->getLang('adv_imp_select_pages'));
+        echo sprintf('<h3>2. %s</h3>', $this->getLang('imp_select_pages'));
 
         $Zip = new ZipLib;
 
         echo '<table class="table inline pages" width="100%">';
         echo '<thead>
       <tr>
-        <th width="10"><input type="checkbox" class="import-all-pages" title="' . $this->getLang('adv_select_all_pages') . '" /></th>
+        <th width="10"><input type="checkbox" class="import-all-pages" title="' . $this->getLang('select_all_pages') . '" /></th>
         <th>File</th>
         <th>Size</th>
       </tr>
@@ -239,7 +236,8 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
         <td>%s</td>',
                 $fileinfo['filename'],
                 $fileinfo['filename'],
-                filesize_h($fileinfo['size']));
+                filesize_h($fileinfo['size'])
+            );
             echo '<tr>';
         }
 
@@ -253,14 +251,14 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
         <td width="10"><input type="checkbox" name="overwrite-existing-pages" /></td>
         <td>%s</td>
       </tr>
-    </tbody>', $this->getLang('adv_imp_overwrite_pages'));
+    </tbody>', $this->getLang('imp_overwrite_pages'));
         echo '</table>';
 
         echo '<p>&nbsp;</p>';
 
         echo '<p class="pull-right">';
         echo sprintf('<button type="submit" name="import[upload_form]" class="btn btn-default">&larr; %s</button> ', $lang['btn_back']);
-        echo sprintf('<button type="submit" name="cmd[import]" class="btn btn-primary primary">%s &rarr;</button>', $this->getLang('adv_btn_import'));
+        echo sprintf('<button type="submit" name="cmd[import]" class="btn btn-primary primary">%s &rarr;</button>', $this->getLang('btn_import'));
         echo '</p>';
 
         echo sprintf('<input type="hidden" name="file" value="%s">', $file_path);

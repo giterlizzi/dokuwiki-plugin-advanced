@@ -1,4 +1,4 @@
-====== Advanced DokuWiki configuration ======
+====== Advanced DokuWiki configurations ======
 
 Use this page to control the advanced settings of your DokuWiki installation.
 
