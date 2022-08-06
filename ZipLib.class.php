@@ -486,7 +486,7 @@ class ZipLib {
 
     function _ret_bytes($val) {
         $val = trim($val);
-        $last = $val{strlen($val)-1};
+        $last = $val[strlen($val)-1];
         switch($last) {
             case 'k':
             case 'K':
