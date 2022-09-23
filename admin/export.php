@@ -39,7 +39,7 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
     {
         global $INPUT;
 
-        if (!$_REQUEST['cmd']) {
+        if (!$INPUT->has('cmd')) {
             return;
         }
 
