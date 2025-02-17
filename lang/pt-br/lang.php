@@ -19,7 +19,7 @@ $lang['btn_purge_js']  = 'Limpar cache de JS';
 
 $lang['exp_export_all_pages_in_namespace'] = 'Exportar todas as Páginas no Namespace';
 $lang['exp_include_sub_namespaces']        = 'Incluir sub-namespaces';
-$lang['exp_include_media']                 = 'Incluir mídia';
+$lang['exp_include_media']                 = 'Incluir mídias';
 $lang['exp_no_namespace_selected']         = 'Nenhum namespace selecionado!';
 $lang['exp_select_namespace']              = 'Selecionar o Namespace';
 $lang['exp_select_pages']                  = 'Selecionar as Páginas';
