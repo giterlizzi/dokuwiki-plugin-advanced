@@ -141,7 +141,6 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
 
         if ($ns == '(root)') {
             $ns    = '';
-            $depth = ($follow_ns ? 2 : 1);
         }
 
         $pages     = array();
