@@ -1,0 +1,42 @@
+==== Links InterWiki ====
+
+A ideia original do InterWiki era ter um grande Wiki distribuído por toda a Internet. Hoje é uma maneira mais fácil de vincular de um wiki a outro, tendo uma sintaxe de link simples para fazer isso.
+
+No DokuWiki, isso é feito prefixando os nomes das páginas da Wiki com um atalho separado por um caractere ''>'' (ex. ''<nowiki>[[wp>InterWiki]]</nowiki>'').
+
+Exemplos:
+
+| %%[[wp>InterWiki]]%%    | [[wp>InterWiki]]    | links para a Wikipédia em inglês |
+| %%[[phpfn>random]]%%    | [[phpfn>random]]    | links para uma função no manual do PHP |
+| %%[[google>Wiki]]%%     | [[google>Wiki]]     | links para uma pesquisa no Google |
+| %%[[doku>interwiki]]%%  | [[doku>interwiki]]  | links para o wiki do DokuWiki |
+| %%[[skype>echo123]]%%   | [[skype>echo123]]   | links que abrem o Skype, pronto para chamar a chamada de teste do Skype (echo123) |
+| %%[[this>feed.php]]%%   | [[this>feed.php]]   | links para o URL do seu wiki. O exemplo tem links para o [[doku>syndication|feed XML]] local. ''%%[[this>]]%%'' é um caso especial e o único link interwiki que **não pode ser configurado** por meio de nenhum arquivo de configuração. |
+
+O formato do arquivo de configuração interwiki é:
+
+  <shortcut>      <url to wiki>
+
+O atalho é aquele que você poderá usar no link posteriormente. Na URL você pode usar alguns espaços reservados para ser mais flexível no link. Se nenhum espaço reservado for fornecido, o nome do wiki [[phpfn>rawurlencode|URL-encoded]] será anexado à URL. Esses espaços reservados estão disponíveis:
+
+^ Espaço reservado  ^  Substituído por                                                                 ^
+| {URL}        | wikiname URL-encoded (a parte que é anexada ao URL em interwiki.local.conf)           |
+| {NAME}       | wikiname sem qualquer codificação                                                     |
+| {SCHEME}     | parte do esquema se um URL foi fornecido como wikiname                                |
+| {HOST}       | parte do host se uma URL foi fornecida como wikiname                                  |
+| {PORT}       | parte da porta se um URL foi fornecido como wikiname                                  |
+| {PATH}       | parte do caminho se uma URL foi fornecida como wikiname                               |
+| {QUERY}      | parte da consulta se uma URL foi fornecido como wikiname                              |
+
+Se nenhum espaço reservado for definido, o wikiname URL-encoded será anexado à URL.
+
+=== Exemplo de interwiki.conf ===
+
+<code>
+wp        https://en.wikipedia.org/wiki/{NAME}
+doku      https://www.dokuwiki.org/
+user      :user:{NAME}
+</code>
+
+=== Veja também ===
+  * [[doku>interwiki]]

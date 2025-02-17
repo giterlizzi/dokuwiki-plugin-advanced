@@ -1,0 +1,12 @@
+==== Smiles ====
+
+O DokuWiki pode converter smileys de texto em seus equivalentes gráficos. As imagens padrão dos smileys são armazenadas no diretório ''lib/images/smileys/'' e configurado no arquivo ''conf/smileys.conf''. Os diretórios local e upgrade-safe de imagens de smileys é armazenado no diretório ''lib/images/smileys/local'' e configurado em ''conf/smiles.local.conf''.
+
+=== Exemplo de smileys.conf ===
+
+<code>
+:MYFACE:                local/i_am_so_pretty.jpg
+</code>
+
+=== Veja também ===
+  * [[doku>smileys]]

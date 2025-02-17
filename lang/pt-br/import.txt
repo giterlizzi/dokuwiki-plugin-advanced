@@ -1,0 +1,3 @@
+====== Advanced: Utilitário de Importação ======
+
+Use esta página para importar (ou implantar) páginas do DokuWiki exportadas com o [[this>?do=admin&page=advanced_export|Utilitário de Exportação]].

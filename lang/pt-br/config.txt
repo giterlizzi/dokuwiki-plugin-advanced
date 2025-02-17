@@ -1,0 +1,25 @@
+==== Arquivos de configuração ====
+
+Todos os arquivos de configuração podem ser encontrados nos diretórios ''./conf'' ou ''/etc/dokuwiki'' quando instalado à partir de um pacote Debian.
+
+"Arquivos principais" geralmente são embutidos com o DokuWiki, enquanto "arquivos locais" devem ser criados pelo administrador do wiki. 
+
+Se arquivos locais são suportados você deve usá-los ao invés de modificar os arquivos principais para evitar problemas durante atualizações de versão do wiki.
+
+
+^ arquivos principais       ^ arquivos locais                                    ^ tipo de configuração       ^ informação rápida                      ^
+| ''dokuwiki.php''          | ''local.php''\\ ''local.protected.php''            | veja [[doku>config#configuration_options|config]] | configuração geral do wiki  |
+| ''acronyms.conf''         | ''acronyms.local.conf''                            | [[doku>abbreviations]]     | dicas de abreviação automática         |
+| ''entities.conf''         | ''entities.local.conf''                            | [[doku>entities]]          | substituições de texto automática      |
+| ''interwiki.conf''        | ''interwiki.local.conf''                           | [[doku>interwiki]]         | links de atalho interwiki              |
+| ''mime.conf''             | ''mime.local.conf''                                | [[doku>mime]]              | configurações de mime type para uploads|
+| ''smileys.conf''          | ''smileys.local.conf''                             | [[doku>smileys]]           | substituições de imagem                |
+|                           | ''acl.auth.php''                                   | veja [[doku>acl]]          | configurações de Controles de Acesso   |
+|                           | ''users.auth.php''                                 | veja [[doku>acl]]          | Usuários e Senhas                      |
+| ''license.php''           | ''license.local.php''                              | [[doku>config:license]]    | lista de licenças disponíveis          |
+| ''scheme.conf''           | ''scheme.local.conf''                              | [[doku>urlschemes]]        | Esquemas de URL a serem reconhecidos como links  |
+| ''mediameta.php''         |                                                    | [[doku>exif]]              | Metadados editáveis para imagens       |
+| ''wordblock.conf''        | ''wordblock.local.conf''                           | [[doku>blacklist]]         | Lista negra de spam                    |
+| ''plugins.required.php''  | ''plugins.local.php''\\ ''plugins.protected.php''  | veja [[doku>config#enabling_disabling_plugins|config]] | Ativar/desativar plug-ins  |
+|                           | ''userscript.js''                                  | [[doku>devel:javascript]]  | Aprimoramentos de JavaScript personalizados  |
+|                           | ''userstyle.css''                                  | [[doku>devel:css]]         | Aprimoramentos de CSS personalizados   |
