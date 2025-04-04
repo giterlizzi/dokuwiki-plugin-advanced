@@ -1,0 +1,26 @@
+==== Lista de Controles de Acesso (ACL)s ====
+
+ :!: **Por favor, edite com cuidado** :!:
+
+As restrições de acesso são salvas em um arquivo chamado ''conf/acl.auth.php'', que deve ser gravável pelo servidor web se você quiser usar a interface de administração do ACL descrita acima. Não é recomendado editar este arquivo manualmente. Em vez disso, use a interface de administração.
+
+Linhas vazias e comentários no estilo shell são ignorados. Cada linha contém 3 campos separados por espaços em branco:
+
+  * O recurso a ser restringido. Isso pode ser um [[doku>pagename|nome de página]] ou um [[doku>namespace]]. Namespaces são marcados por um asterisco adicional (veja exemplos abaixo).
+  * Um nome de grupo ou usuário. Os nomes dos grupos são marcados por um caractere ''@'' à esquerda.
+  * Um nível de permissão (veja abaixo).
+
+Existem 7 níveis de permissão representados por um número inteiro. Os níveis mais altos incluem os mais baixos. Se você pode editar, também pode ler. No entanto, a permissão //admin// de //255// não pode ser usada no arquivo ''conf/acl.auth.php''. Ele só é usado internamente combinando com a opção [[doku>config:superuser]].
+
+^ Nome    ^ Nível  ^ aplica-se a ^ Permissão ^ Constante do DokuWiki  ^
+| nenhuma |  0  | páginas, namespaces  | sem permissão---bloqueio completo  | AUTH_NONE  |
+| ler     |  1  | páginas, namespaces  | permissão de leitura  | AUTH_READ  |
+| editar  |  2  | páginas, namespaces  | páginas existentes podem ser editadas | AUTH_EDIT  |
+| criar   |  4  | namespaces | novas páginas podem ser criadas | AUTH_CREATE  |
+| enviar  |  8  | namespaces | arquivos de mídia podem ser carregados | AUTH_UPLOAD  |
+| excluir |  16   | namespaces | arquivos de mídia podem ser substituídos ou excluídos | AUTH_DELETE  |
+| admin   |  255  | admin plug-ins  | superusuário((veja [[doku>config:superuser]])) pode alterar as configurações de administrador  | AUTH_ADMIN |
+
+
+=== Veja também ===
+  * [[doku>acl]]

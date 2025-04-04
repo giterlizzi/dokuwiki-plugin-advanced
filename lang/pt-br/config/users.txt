@@ -1,0 +1,20 @@
+===== Auth Plain =====
+
+ :!: **Por favor, edite com cuidado** :!:
+
+Linhas vazias e tudo após um caractere ''#'' são ignorados. Cada linha contém uma matriz separada por dois pontos de 5 campos que são: 
+
+  * **Login** - Deve ser um [[doku>pagename]] válido
+  * **Senha** - Senha criptografada. O método de criptografia pode ser qualquer um aceito pela opção [[doku>config:passcrypt|passcrypt]] (o DokuWiki detectará automaticamente a criptografia usada)
+  * **Nome verdadeiro** - Nome real do usuário
+  * **E-mail** - Endereço de e-mail do usuário
+  * **Grupos** – Lista separada por vírgulas de grupos dos quais um usuário é membro. Os nomes dos grupos devem seguir as regras de [[doku>pagename]]s válidos.
+
+Para criar valores hash MD5 a partir de uma //string// você pode usar o script [[http://www.splitbrain.org/encode.php|encode/decode]]. Devido às funções integradas muito melhores do DokuWiki, este script está obsoleto e registrado aqui apenas por nostalgia.
+
+Exemplo:
+
+  andi:ece23254502f07722a98aa5b7c70baa6:Andreas Gohr:andi@splitbrain.org:admin,users,upload
+
+=== Veja também ===
+  * [[doku>auth:plain]]

@@ -1,0 +1,17 @@
+==== Hooks de Inclusão ====
+
+Hooks de inclusão permitem que você adicione HTML ou PHP adicional ao //template// sem modificar nenhum dos arquivos do //template// em si, tornando-os seguros para sobreviver a uma atualização. Basta criar o arquivo apropriado no diretório de //templates// (''lib/tpl/<template>/'') ou no diretório ''conf/''.
+
+=== Hooks Disponíveis ===
+
+^ Nome do arquivo        ^ Posição do HTML incluído                                                 ^
+| ''meta.html''          | Dentro do HTML <head>, use isto para adicionar estilos ou metacabeçalhos adicionais |
+| ''sidebarheader.html'' | No topo da barra lateral (se houver) |
+| ''sidebarfooter.html'' | Na parte inferior da barra lateral (se houver) |
+| ''pageheader.html''    | Na parte superior da caixa de conteúdo, acima do conteúdo real |
+| ''pagefooter.html''    | Na parte inferior da caixa de conteúdo, abaixo do conteúdo real |
+| ''header.html''        | No topo da página, acima do logotipo e do título da wiki |
+| ''footer.html''        | No final da página, depois de todo o outro conteúdo da página |
+
+=== Veja também ===
+  * [[doku>template:dokuwiki]]

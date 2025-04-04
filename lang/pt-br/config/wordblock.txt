@@ -1,0 +1,8 @@
+==== Lista negra ====
+
+A internet não é mais o lugar que costumava ser. Tudo que é bom fica corrompido e o mesmo acontece com os Wikis. O WikiSpam, assim como o spam em blogs e e-mails, está aumentando. Se você usa o DokuWiki na sua intranet, isso não é problema para você. Mas se você pretende usá-lo na Internet aberta, você pode querer colocar na lista negra algumas palavras de spam conhecidas.
+
+=== Veja também ===
+  * [[doku>blacklist]]
+  * [[https://meta.wikimedia.org/wiki/Spam_blacklist|Spam blacklist - Meta-Wiki - Wikimedia]]
+

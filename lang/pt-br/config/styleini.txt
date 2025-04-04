@@ -1,0 +1,39 @@
+==== Template style.ini ====
+
+O ''style.ini'' é um [[wp>INI_file|arquivo INI]] em cada diretório de [[doku>template]]'s ((se o //template// for compatível)) configurando a geração de estilos [[doku>devel:css|CSS]]. Tem duas seções: [stylesheets] e [replacements] descritas abaixo.
+
+=== [stylesheets] ===
+
+Esta parte define quais arquivos CSS são carregados. Cada linha é definida da seguinte forma:
+
+  cssfile.css = mode
+
+''cssfile.css'' é o nome do seu arquivo e ''mode'' é um dos modos de saída suportados, conforme descrito em [[doku>devel:CSS#Stylesheet Modes|mode]].
+
+A folha de estilo também pode ser um arquivo ''.less''. (Veja [[doku>devel:less|LESS]]).
+
+=== [replacements] ===
+
+O CSS //dispatcher// do DokuWiki é capaz de substituir espaços reservados nas folhas de estilo carregadas que são configuradas através da seção ''[replacements]'' nos arquivos ''style.ini'' dos //templates//. Isto é especialmente útil para definir um esquema de cores uma vez e reutilizar essas cores em todos os arquivos.
+
+Essas substituições também podem ser usadas como [[doku>devel:less#accessing_styleini_placeholders|variáveis LESS]].
+
+== Espaços reservados de cor seguros ==
+
+Os espaços reservados a seguir são os únicos que podem ser usados com segurança por plug-ins. Todos os //templates// precisam implementá-los pelo menos, mas são livres para adicionar mais.
+
+^variável de espaço reservado		^significado			^
+^''%%__background__%%''		|cor de fundo principal		|
+^''%%__background_alt__%%''	|cor de fundo alternativa	|
+^''%%__background_neu__%%''	|cor de fundo neutra	|
+^''%%__border__%%''		|cor da borda			|
+^''%%__text__%%''		|cor do texto principal		|
+^''%%__text_alt__%%''		|cor alternativa do texto		|
+^''%%__text_neu__%%''		|cor neutra do texto		|
+^''%%__highlight__%%''		|cor do texto destacado (**novo** desde Adora Belle) |
+^''%%__link__%%''		|cor geral do link (**novo** desde Greebo) |
+
+Os autores de predefinições geralmente devem tentar reutilizar os nomes de espaço reservado da predefinição padrão.
+
+=== Veja também ===
+  * [[doku>devel:style.ini]]

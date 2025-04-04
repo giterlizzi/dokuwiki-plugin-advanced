@@ -1,0 +1,18 @@
+==== Folhas de Estilo CSS ====
+
+A maior parte da apresentação do DokuWiki pode ser controlada através de folhas de estilo CSS. O DokuWiki define alguns estilos mínimos. O resto das definições CSS vêm do [[doku>template]] e [[doku>plugins]] usados.
+
+Todos os arquivos CSS são obtidos por meio de um único //dispatcher// em [[xref>lib/exe/css.php]] que também lida com cache, substituição de //pattern//, pré-processamento e otimização [[doku>devel:less|LESS]]. O carregamento das folhas de estilo, entre outras coisas, é feito através da função ''tpl_metaheaders()'', então não se esqueça de tê-la em seu //template//.
+
+=== Modos de Folhas de Estilo ===
+
+Existem cinco tipos de modos de folha de estilo:
+
+  * **screen**: Isso é usado ao exibir páginas no navegador da web
+  * **print**: As definições aqui serão usadas para imprimir páginas
+  * **all**: Aplicado em todos os modos de exibição
+  * <del>**rtl**: Definições em arquivos ''rtl'' será carregado adicionalmente quando um [[:localization|idioma]] RTL é usado</del> :!: **[[depreciado]], veja [[doku>devel:css#RTL Styles]]**
+  * **feed**: Applied when displaying the [[doku>:syndication|feed]]
+
+=== Veja também ===
+  * [[doku>devel:css]]

@@ -1,0 +1,23 @@
+==== JavaScript ====
+
+O DokuWiki faz uso de [[wp>JavaScript]] para melhorar a experiência do usuário. Como para [[doku>css|folhas de estilo]], todos os arquivos JavaScript são entregues por meio de um único //dispatcher// para minimizar as solicitações HTTP, para cache e [[doku>config:compress|compressão]].
+
+Esta página fornece uma visão geral de como o JavaScript é carregado a partir do //core//, [[doku>plug-ins]] e [[doku>templates]] do DokuWiki. Ela também fornece algumas informações sobre manipulação de eventos e estilo de codificação ao escrever JavaScript para uso no DokuWiki.
+
+=== Carregamento de JavaScript ===
+
+Todo o JavaScript é coletado e entregue por [[xref>lib/exe/js.php]]. Este arquivo concatenará todos os arquivos encontrados, compactação de espaço em branco (se a opção
+[[doku>config:compress]] está habilitada) e realiza cache do resultado. Ele também instrui os navegadores a armazenar o arquivo em cache, portanto, quando você estiver desenvolvendo um novo JavaScript, certifique-se de atualizar o cache do navegador (pressionando Shift-F5, Shift+CTRL+R ou similar) sempre que seu script for atualizado.
+
+O DokuWiki carregará JavaScript dos seguintes locais:
+
+  * JavaScript gerado automaticamente (//strings// de idioma, opções de configuração, [[doku>toolbar]])
+  * lib/scripts/*.js
+  * lib/plugins/*/script.js
+  * lib/tpl/<currenttemplate>/script.js
+  * conf/userscript.js
+
+Como você pode ver, você pode fornecer JavaScript com seus [[doku>templates]] e [[doku>plugins]] (através de um arquivo ''script.js'') e pode definir seus próprios scripts em ''conf/userscript.js''.
+
+=== Veja também ===
+  * [[doku>devel:javascript]]
