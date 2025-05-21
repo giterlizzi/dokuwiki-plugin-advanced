@@ -1,5 +1,8 @@
 <?php
 
+use dokuwiki\Extension\AdminPlugin;
+use dokuwiki\File\MediaFile;
+
 /**
  * Dokuwiki Advanced Import/Export Plugin
  *
@@ -7,9 +10,7 @@
  * @author     Giuseppe Di Terlizzi <giuseppe.diterlizzi@gmail.com>
  */
 
-
-
-class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
+class admin_plugin_advanced_export extends AdminPlugin
 {
 
     /**
@@ -53,16 +54,11 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
             $cmd = "cmd_$cmd";
             $this->$cmd();
         }
-
     }
 
     public function html()
     {
-
-        global $INPUT;
         global $lang;
-        global $conf;
-        global $ID;
 
         $lang['toc'] = $this->getLang('menu_export');
 
@@ -80,12 +76,10 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
 
         echo '</form>';
         echo '</div>';
-
     }
 
     private function steps_dispatcher()
     {
-
         global $INPUT;
 
         $step = $INPUT->extract('export')->str('export');
@@ -95,14 +89,11 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
         }
 
         return call_user_func(array($this, "step_$step"));
-
     }
 
     private function step_select_ns()
     {
-
         global $conf;
-        global $lang;
 
         $namespaces = array();
         $options    = array();
@@ -126,15 +117,14 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
 
         echo '<p class="pull-right">';
         echo sprintf('<label><input type="checkbox" name="include-sub-ns" /> %s</label> ', $this->getLang('exp_include_sub_namespaces'));
+        echo sprintf('<label><input type="checkbox" name="include-media" /> %s</label> ', $this->getLang('exp_include_media'));
         echo sprintf('<button type="submit" name="cmd[export]" class="btn btn-default">%s &rarr;</button> ', $this->getLang('exp_export_all_pages_in_namespace'));
         echo sprintf('<button type="submit" name="export[select_pages]" class="btn btn-primary primary">%s &rarr;</button> ', $this->getLang('exp_select_pages'));
         echo '</p>';
-
     }
 
-    private function getPagesFromNamespace($ns, $follow_ns = 0)
+    private function getNamespaceContent($ns, $follow_ns = false, $include_media = false)
     {
-
         global $conf;
 
         $depth = ($follow_ns ? 0 : 2);
@@ -150,18 +140,20 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
 
         search($pages, $conf['datadir'], 'search_allpages', $options, $namespace);
 
-        return $pages;
+        $media = [];
+        if ($include_media) {
+            search($media, $conf['mediadir'], 'search_media', $options, $namespace);
+        }
 
+        return [$pages, $media];
     }
 
     private function step_select_pages()
     {
 
         global $INPUT;
-        global $conf;
         global $lang;
 
-        $pages     = array();
         $namespace = str_replace(':', '/', $INPUT->str('ns'));
 
         if (!$namespace) {
@@ -170,11 +162,14 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
             return 0;
         }
 
-        $pages = $this->getPagesFromNamespace($INPUT->str('ns'), ($INPUT->str('include-sub-ns') ? 1 : 0));
+        [$pages, $media] = $this->getNamespaceContent($INPUT->str('ns'), (bool)$INPUT->str('include-sub-ns'), (bool)$INPUT->str('include-media'));
 
         echo sprintf('<h3>%s</h3>', $this->getLang('exp_select_pages'));
         echo sprintf('<input type="hidden" value="%s" name="ns" />', $INPUT->str('ns'));
 
+        /**
+         * Pages table
+         */
         echo '<table class="table inline pages" width="100%">';
         echo '<thead>
       <tr>
@@ -188,7 +183,6 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
         echo '<tbody>';
 
         foreach ($pages as $page) {
-
             $page_id       = $page['id'];
             $page_title    = p_get_first_heading($page_id);
             $page_size     = filesize_h($page['size']);
@@ -210,7 +204,41 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
                 $create_user, $create_date,
                 $modified_user, $modified_date,
                 $page_size);
+        }
+        echo '</tbody>';
+        echo '</table>';
 
+        /**
+         * Media table
+         */
+
+        echo '<table class="table inline media" width="100%">';
+
+        echo '<thead><tr>
+        <th width="10"><input type="checkbox" class="export-all-media" title="' . $this->getLang('select_all_media') . '" /></th>
+        <th>Media</th>
+        <th>Extension</th>
+        <th>Modified</th>
+        <th>Size</th>
+      </tr></thead>';
+        echo '<tbody>';
+
+        foreach ($media as $info) {
+            $file = new MediaFile($info['id']);
+
+            echo sprintf('
+        <tr>
+          <td><input type="checkbox" name="media[%s]" class="export-page" /></td>
+          <td>%s</td>
+          <td>%s</td>
+          <td>%s</td>
+          <td>%s</td>
+        </tr>',
+            $info['id'],
+            $info['id'],
+            $file->getExtension(),
+            dformat($file->getLastModified()),
+            filesize_h($file->getFileSize()));
         }
 
         echo '</tbody>';
@@ -223,35 +251,35 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
         echo sprintf('<button type="submit" name="export[select_ns]" class="btn btn-default">&larr; %s</button> ', $lang['btn_back']);
         echo sprintf('<button type="submit" name="cmd[export]" class="btn btn-primary primary">%s &rarr;</button>', $this->getLang('btn_export'));
         echo '</p>';
-
     }
 
     private function cmd_export()
     {
-
         global $INPUT;
         global $conf;
 
-        $pages = array();
+        $pages = [];
+        $media = [];
 
         switch ($INPUT->str('step')) {
-
             case 'select-ns':
-
-                foreach ($this->getPagesFromNamespace($INPUT->str('ns'), ($INPUT->str('include-sub-ns') ? 1 : 0)) as $page) {
+                [$pageInfo, $mediaInfo] = $this->getNamespaceContent($INPUT->str('ns'), (bool)$INPUT->str('include-sub-ns'), (bool)$INPUT->str('include-media'));
+                foreach ($pageInfo as $page) {
                     $pages[] = $page['id'];
                 }
-
+                foreach ($mediaInfo as $info) {
+                    $media[] = $info['id'];
+                }
                 break;
 
             case 'select-pages':
                 $pages = array_keys($INPUT->arr('pages'));
+                $media = array_keys($INPUT->arr('media'));
                 break;
-
         }
 
-        if (!count($pages)) {
-            msg('No page selected for export!', -1);
+        if (!count($pages) && !count($media)) {
+            msg('Nothing selected for export!', -1);
             return 0;
         }
 
@@ -262,14 +290,23 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
         $Zip->create();
 
         foreach ($pages as $page) {
-
             $file_fullpath = wikiFN($page);
-            $file_path     = str_replace($conf['datadir'], '', $file_fullpath);
+            $parts = explode(DIRECTORY_SEPARATOR, $conf['datadir']);
+            $file_path     = str_replace($conf['datadir'], end($parts), $file_fullpath);
             $file_content  = io_readFile($file_fullpath);
 
             $Zip->addData($file_path, $file_content);
-
         }
+
+        foreach ($media as $file) {
+            $file_fullpath = mediaFN($file);
+            $parts = explode(DIRECTORY_SEPARATOR, $conf['mediadir']);
+            $file_path     = str_replace($conf['mediadir'], end($parts), $file_fullpath);
+            $file_content  = io_readFile($file_fullpath);
+
+            $Zip->addData($file_path, $file_content);
+        }
+
 
         header("Content-Type: application/zip");
         header("Content-Transfer-Encoding: Binary");
@@ -277,7 +314,5 @@ class admin_plugin_advanced_export extends DokuWiki_Admin_Plugin
 
         echo $Zip->getArchive();
         die();
-
     }
-
 }
