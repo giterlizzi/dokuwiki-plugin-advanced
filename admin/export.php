@@ -142,6 +142,8 @@ class admin_plugin_advanced_export extends AdminPlugin
 
         $media = [];
         if ($include_media) {
+            // search methods for pages and media have slightly different concepts of depth
+            $options['depth'] = $follow_ns ? 2 : 1;
             search($media, $conf['mediadir'], 'search_media', $options, $namespace);
         }
 
@@ -150,7 +152,6 @@ class admin_plugin_advanced_export extends AdminPlugin
 
     private function step_select_pages()
     {
-
         global $INPUT;
         global $lang;
 
@@ -211,7 +212,6 @@ class admin_plugin_advanced_export extends AdminPlugin
         /**
          * Media table
          */
-
         echo '<table class="table inline media" width="100%">';
 
         echo '<thead><tr>
@@ -291,22 +291,17 @@ class admin_plugin_advanced_export extends AdminPlugin
 
         foreach ($pages as $page) {
             $file_fullpath = wikiFN($page);
-            $parts = explode(DIRECTORY_SEPARATOR, $conf['datadir']);
-            $file_path     = str_replace($conf['datadir'], end($parts), $file_fullpath);
+            $file_path     = \helper_plugin_advanced::PAGES_DIR . str_replace($conf['datadir'], '', $file_fullpath);
             $file_content  = io_readFile($file_fullpath);
-
             $Zip->addData($file_path, $file_content);
         }
 
         foreach ($media as $file) {
             $file_fullpath = mediaFN($file);
-            $parts = explode(DIRECTORY_SEPARATOR, $conf['mediadir']);
-            $file_path     = str_replace($conf['mediadir'], end($parts), $file_fullpath);
-            $file_content  = io_readFile($file_fullpath);
-
+            $file_path     = \helper_plugin_advanced::MEDIA_DIR . str_replace($conf['mediadir'], '', $file_fullpath);
+            $file_content  = io_readFile($file_fullpath, false);
             $Zip->addData($file_path, $file_content);
         }
-
 
         header("Content-Type: application/zip");
         header("Content-Transfer-Encoding: Binary");

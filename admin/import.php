@@ -1,5 +1,7 @@
 <?php
 
+use dokuwiki\Extension\AdminPlugin;
+
 /**
  * Dokuwiki Advanced Import/Export Plugin
  *
@@ -7,7 +9,7 @@
  * @author     Giuseppe Di Terlizzi <giuseppe.diterlizzi@gmail.com>
  */
 
-class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
+class admin_plugin_advanced_import extends AdminPlugin
 {
 
     /**
@@ -84,16 +86,14 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
 
     private function cmd_import()
     {
-
         global $INPUT;
-        global $conf;
 
         $extract_dir     = io_mktmpdir();
         $archive_file    = $INPUT->str('file');
         $overwrite_pages = ($INPUT->str('overwrite-existing-pages') == 'on' ? true : false);
-        $files           = array_keys($INPUT->arr('files'));
+        $pages           = array_keys($INPUT->arr('pages'));
+        $media           = array_keys($INPUT->arr('media'));
         $ns              = $INPUT->str('ns');
-        $imported_pages  = array();
 
         if ($ns == '(root)') {
             $ns = '';
@@ -112,38 +112,15 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
             return 0;
         }
 
-        if (!count($files)) {
+        if (!count($pages) && !count($media)) {
             msg($this->getLang('imp_no_page_selected'), -1);
             return 0;
         }
 
-        foreach ($files as $file) {
+        $errors = [];
 
-            $wiki_page = str_replace('/', ':', preg_replace('/\.txt$/', '', $file));
-            $wiki_page = cleanID("$ns:$wiki_page");
-
-            $sum = $this->getLang('imp_page_summary');
-
-            if (page_exists($wiki_page) && !$overwrite_pages) {
-                msg(sprintf($this->getLang('imp_page_already_exists'), $wiki_page), 2);
-                continue;
-            }
-
-            if (!page_exists($wiki_page)) {
-                $sum = $lang['created'] . " - $sum";
-            }
-
-            $wiki_text = io_readFile("$extract_dir/$file");
-
-            checklock($wiki_page);
-            lock($wiki_page);
-            saveWikiText($wiki_page, $wiki_text, $sum);
-            unlock($wiki_page);
-            idx_addPage($wiki_page);
-
-            $imported_pages[] = $wiki_page;
-
-        }
+        $this->importPages($ns, $pages, $extract_dir, $overwrite_pages, $errors);
+        $this->importMedia($ns, $media, $extract_dir, $overwrite_pages, $errors);
 
         # Delete import archive
         unlink($archive_file);
@@ -151,10 +128,81 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
         # Delete the extract directory
         io_rmdir($extract_dir, true);
 
-        if (count($imported_pages)) {
+        if (!count($errors)) {
             msg($this->getLang('imp_pages_import_success'));
+            return;
         }
 
+        foreach ($errors as $error) {
+            msg($error, -1);
+        }
+    }
+
+    /**
+     * Import pages from uploaded file
+     *
+     * @param string $ns
+     * @param array $pages
+     * @param string $extract_dir
+     * @param bool $overwrite_pages
+     * @param array $errors
+     */
+    protected function importPages($ns, $pages, $extract_dir, $overwrite_pages, &$errors)
+    {
+        global $lang;
+
+        foreach ($pages as $srcFile) {
+            // strip pages directory from the beginning of path
+            $targetFile = preg_replace('$^'. \helper_plugin_advanced::PAGES_DIR . '$', '', $srcFile);
+
+            $wiki_page = str_replace('/', ':', preg_replace('/\.txt$/', '', $targetFile));
+            $wiki_page = cleanID("$ns:$wiki_page");
+
+            $sum = $this->getLang('imp_page_summary');
+
+            if (page_exists($wiki_page) && !$overwrite_pages) {
+                $errors[] = sprintf($this->getLang('imp_page_already_exists'), $wiki_page);
+                continue;
+            }
+
+            if (!page_exists($wiki_page)) {
+                $sum = $lang['created'] . " - $sum";
+            }
+
+            $wiki_text = io_readFile("$extract_dir/$srcFile");
+
+            checklock($wiki_page);
+            lock($wiki_page);
+            saveWikiText($wiki_page, $wiki_text, $sum);
+            unlock($wiki_page);
+            idx_addPage($wiki_page);
+        }
+    }
+
+    /**
+     * Import media from uploaded file
+     *
+     * @param string $ns
+     * @param array $media
+     * @param string $extract_dir
+     * @param bool $overwrite
+     * @param array $errors
+     */
+    protected function importMedia($ns, $media, $extract_dir, $overwrite, &$errors)
+    {
+        foreach ($media as $srcFile) {
+            // strip media directory from the beginning of path
+            $targetFile = preg_replace('$^'. \helper_plugin_advanced::MEDIA_DIR . '$', '', $srcFile);
+
+            $mediaId = str_replace('/', ':', $targetFile);
+            $mediaId = cleanID("$ns:$mediaId");
+
+            $res = media_save(['name' => "$extract_dir/$srcFile"], $mediaId, $overwrite, AUTH_ADMIN, 'copy');
+
+            if (is_array($res)) {
+                $errors[] = $res[0] . " ($mediaId)";
+            }
+        }
     }
 
     private function steps_dispatcher()
@@ -172,23 +220,29 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
 
     }
 
+    /**
+     * Displays upload form for the Zip archive
+     *
+     * @return void
+     */
     private function step_upload_form()
     {
-
-        global $lang;
-
         echo '<input type="file" name="file" required="required" accept=".zip,application/zip,application/x-zip,application/x-zip-compressed" />';
         echo '<p>&nbsp;</p>';
 
         echo '<p class="pull-right">';
         echo sprintf('<button type="submit" name="import[upload_backup]" class="btn btn-primary primary">%s &rarr;</button> ', $this->getLang('imp_upload_backup'));
         echo '</p>';
-
     }
 
+    /**
+     * Displays import selection and options
+     *
+     * @return void
+     * @throws \splitbrain\PHPArchive\ArchiveIOException
+     */
     private function step_upload_backup()
     {
-
         global $conf;
         global $lang;
 
@@ -198,7 +252,7 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
 
         move_uploaded_file($tmp_name, $file_path);
 
-        search($namespaces, $conf['datadir'], 'search_namespaces', $options, '');
+        search($namespaces, $conf['datadir'], 'search_namespaces', []);
 
         echo sprintf('<h3>1. %s</h3>', $this->getLang('imp_select_namespace'));
 
@@ -222,19 +276,30 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
         echo '<thead>
       <tr>
         <th width="10"><input type="checkbox" class="import-all-pages" title="' . $this->getLang('select_all_pages') . '" /></th>
-        <th>File</th>
+        <th>Type</th>
+        <th>Import</th>
         <th>Size</th>
       </tr>
     </thead>';
         echo '<tbody>';
 
+        $type = 'pages';
+
         foreach ($Zip->contents() as $fileinfo) {
+            // change type for media files
+            if (str_starts_with($fileinfo->getPath(), \helper_plugin_advanced::MEDIA_DIR)) {
+                $type = 'media';
+            }
+
             echo '<tr>';
-            echo sprintf('
-        <td><input type="checkbox" name="files[%s]" class="import-file" /></td>
-        <td>%s</td>
-        <td>%s</td>',
-                $fileinfo->getPath(),
+            echo sprintf(
+                '<td><input type="checkbox" name="%s[%s]" class="import-file" /></td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>',
+                $type, // store the file to be imported in appropriate variable
+                $fileinfo->getPath(), // full import path
+                $type,
                 $fileinfo->getPath(),
                 filesize_h($fileinfo->getSize())
             );
@@ -247,11 +312,12 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
         echo '<h3>3. Options</h3>';
         echo '<table class="table inline">';
         echo sprintf('<tbody>
-      <tr>
-        <td width="10"><input type="checkbox" name="overwrite-existing-pages" /></td>
-        <td>%s</td>
-      </tr>
-    </tbody>', $this->getLang('imp_overwrite_pages'));
+              <tr>
+                <td width="10"><input type="checkbox" name="overwrite-existing-pages" /></td>
+                <td>%s</td>
+              </tr>
+            </tbody>',
+            $this->getLang('imp_overwrite_pages'));
         echo '</table>';
 
         echo '<p>&nbsp;</p>';
@@ -262,7 +328,5 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
         echo '</p>';
 
         echo sprintf('<input type="hidden" name="file" value="%s">', $file_path);
-
     }
-
 }
