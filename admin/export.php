@@ -129,7 +129,9 @@ class admin_plugin_advanced_export extends AdminPlugin
     {
         global $conf;
 
-        $depth = ($follow_ns ? 0 : 2);
+        // nesting depth of namespaces + 1 level deeper for pages (e.g. ns1:ns2:ns3:start has pageDepth 4)
+        $pagesDepth = count(explode(':', $ns)) + 1;
+        $depth = ($follow_ns ? 0 : $pagesDepth);
 
         if ($ns == '(root)') {
             $ns    = '';
@@ -166,7 +168,7 @@ class admin_plugin_advanced_export extends AdminPlugin
             return 0;
         }
 
-        $nsDir = $conf['datadir'] . '/' . $namespace;
+        $nsDir = $conf['datadir'] . '/' . str_replace('(root)', '', $namespace);
         if (!is_dir($nsDir)) {
             msg(sprintf($this->getLang('exp_namespace_invalid'), $nsDir), -1);
             $this->step_select_ns();
