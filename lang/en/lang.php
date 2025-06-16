@@ -22,6 +22,7 @@ $lang['exp_export_all_pages_in_namespace'] = 'Export everything in namespace';
 $lang['exp_include_sub_namespaces']        = 'Include sub-namespaces';
 $lang['exp_include_media']                 = 'Include media';
 $lang['exp_no_namespace_selected']         = 'No namespace selected!';
+$lang['exp_namespace_invalid']             = 'Namespace %s does not exist!';
 $lang['exp_select_namespace']              = 'Select the namespace';
 $lang['exp_select_pages']                  = 'Select pages and media';
 

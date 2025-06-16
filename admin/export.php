@@ -102,15 +102,17 @@ class admin_plugin_advanced_export extends AdminPlugin
 
         echo sprintf('<h3>%s</h3>', $this->getLang('exp_select_namespace'));
 
-        echo '<p><select name="ns" class="form-control">';
-        echo '<option value="">' . $this->getLang('exp_select_namespace') . '</option>';
-        echo '<option value="(root)">(root)</option>';
+        echo '<input list="plugin__advanced-ns-list" name="ns" id="plugin__advanced-ns-input" class="form-control" />';
+
+        echo '<datalist id="plugin__advanced-ns-list">';
+
+        echo '<option value="(root)"></option>';
 
         foreach ($namespaces as $namespace) {
-            echo sprintf('<option value="%s">%s</option>', $namespace['id'], $namespace['id']);
+            echo sprintf('<option value="%s"></option>', $namespace['id']);
         }
 
-        echo '</select></p>';
+        echo '</datalist>';
         echo '<p>&nbsp;</p>';
 
         echo '<input type="hidden" name="step" value="select-ns" />';
@@ -154,11 +156,19 @@ class admin_plugin_advanced_export extends AdminPlugin
     {
         global $INPUT;
         global $lang;
+        global $conf;
 
         $namespace = str_replace(':', '/', $INPUT->str('ns'));
 
         if (!$namespace) {
             msg($this->getLang('exp_no_namespace_selected'), -1);
+            $this->step_select_ns();
+            return 0;
+        }
+
+        $nsDir = $conf['datadir'] . '/' . $namespace;
+        if (!is_dir($nsDir)) {
+            msg(sprintf($this->getLang('exp_namespace_invalid'), $nsDir), -1);
             $this->step_select_ns();
             return 0;
         }
@@ -260,6 +270,12 @@ class admin_plugin_advanced_export extends AdminPlugin
 
         $pages = [];
         $media = [];
+
+        $nsDir = $conf['datadir'] . '/' . str_replace(':', '/', $INPUT->str('ns'));
+        if (!is_dir($nsDir)) {
+            msg(sprintf($this->getLang('exp_namespace_invalid'), $nsDir), -1);
+            return 0;
+        }
 
         switch ($INPUT->str('step')) {
             case 'select-ns':
