@@ -145,7 +145,7 @@ class admin_plugin_advanced_export extends AdminPlugin
         $media = [];
         if ($include_media) {
             // search methods for pages and media have slightly different concepts of depth
-            $options['depth'] = $follow_ns ? 2 : 1;
+            $options['depth'] = $follow_ns ? 0 : 1;
             search($media, $conf['mediadir'], 'search_media', $options, $namespace);
         }
 
