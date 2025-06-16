@@ -129,29 +129,57 @@ class admin_plugin_advanced_export extends AdminPlugin
     {
         global $conf;
 
-        // nesting depth of namespaces + 1 level deeper for pages (e.g. ns1:ns2:ns3:start has pageDepth 4)
-        $pagesDepth = count(explode(':', $ns)) + 1;
-        $depth = ($follow_ns ? 0 : $pagesDepth);
-
         if ($ns == '(root)') {
-            $ns    = '';
-            $depth = ($follow_ns ? 2 : 1);
+            $ns = '';
         }
 
-        $pages     = array();
-        $namespace = str_replace(':', '/', $ns);
-        $options   = array('depth' => $depth);
+        $ns = str_replace(':', '/', $ns);
 
-        search($pages, $conf['datadir'], 'search_allpages', $options, $namespace);
+        $pages = [];
+        search($pages, $conf['datadir'], 'search_allpages', ['depth' => self::getSearchDepth($ns, $follow_ns)], $ns);
 
         $media = [];
         if ($include_media) {
-            // search methods for pages and media have slightly different concepts of depth
-            $options['depth'] = $follow_ns ? 0 : 1;
-            search($media, $conf['mediadir'], 'search_media', $options, $namespace);
+            search($media, $conf['mediadir'], 'search_media', ['depth' => self::getSearchDepth($ns, $follow_ns, 'media')], $ns);
         }
 
         return [$pages, $media];
+    }
+
+    /**
+     * Depth parameter for search functions,
+     * takes recursion and type (pages or media) into account
+     *
+     * @param string $ns
+     * @param bool $followNs
+     * @param string $type
+     *
+     * @return int
+     */
+    public static function getSearchDepth($ns, $followNs, $type = 'pages')
+    {
+        // recursive search with no depth limit
+        if ($followNs) return 0;
+
+        // search methods for pages and media have slightly different concepts of depth
+        // to prevent recursion in search_media() we need to pass 1 as depth
+        if ($type === 'media') {
+            return 1;
+        }
+
+
+        if ($ns === '') {
+            $nsDepth = 0;
+        } else {
+            $nsDepth = substr_count($ns, '/') + 1;
+        }
+
+        // + 1 level deeper for pages
+        // start has nsDepth of 0 and page depth of 1
+        // ns1:ns2:ns3:start has nsDepth of 3 and page depth of 4
+        $nsDepth += 1;
+
+        return $nsDepth;
     }
 
     private function step_select_pages()
