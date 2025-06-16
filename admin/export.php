@@ -118,8 +118,8 @@ class admin_plugin_advanced_export extends AdminPlugin
         echo '<input type="hidden" name="step" value="select-ns" />';
 
         echo '<p class="pull-right">';
-        echo sprintf('<label><input type="checkbox" name="include-sub-ns" /> %s</label> ', $this->getLang('exp_include_sub_namespaces'));
-        echo sprintf('<label><input type="checkbox" name="include-media" /> %s</label> ', $this->getLang('exp_include_media'));
+        echo sprintf('<label><input type="checkbox" name="include-sub-ns" checked /> %s</label> ', $this->getLang('exp_include_sub_namespaces'));
+        echo sprintf('<label><input type="checkbox" name="include-media" checked /> %s</label> ', $this->getLang('exp_include_media'));
         echo sprintf('<button type="submit" name="cmd[export]" class="btn btn-default">%s &rarr;</button> ', $this->getLang('exp_export_all_pages_in_namespace'));
         echo sprintf('<button type="submit" name="export[select_pages]" class="btn btn-primary primary">%s &rarr;</button> ', $this->getLang('exp_select_pages'));
         echo '</p>';
