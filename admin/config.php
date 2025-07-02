@@ -183,7 +183,7 @@ class admin_plugin_advanced_config extends DokuWiki_Admin_Plugin
         $file_info = $this->getFileInfo();
 
         $file_path   = $file_info['local'];
-        $file_name   = $file_info['localName'];
+        $file_name   = $file_info['local_name'];
         $file_backup = sprintf('%s.%s.gz', $file_path, date('YmdHis'));
 
         $content_old = io_readFile($file_path);
