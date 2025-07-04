@@ -11,25 +11,28 @@ $lang['menu_export'] = 'Export Utility';
 $lang['menu_import'] = 'Import Utility';
 
 $lang['select_all_pages'] = 'Select all pages';
+$lang['select_all_media'] = 'Select all media';
 
 $lang['btn_export']    = "Export";
 $lang['btn_import']    = "Import";
 $lang['btn_purge_css'] = 'Purge CSS cache';
 $lang['btn_purge_js']  = 'Purge JS cache';
 
-$lang['exp_export_all_pages_in_namespace'] = 'Export all Pages in Namespace';
+$lang['exp_export_all_pages_in_namespace'] = 'Export everything in namespace';
 $lang['exp_include_sub_namespaces']        = 'Include sub-namespaces';
+$lang['exp_include_media']                 = 'Include media';
 $lang['exp_no_namespace_selected']         = 'No namespace selected!';
-$lang['exp_select_namespace']              = 'Select the Namespace';
-$lang['exp_select_pages']                  = 'Select the Pages';
+$lang['exp_namespace_invalid']             = 'Namespace %s does not exist!';
+$lang['exp_select_namespace']              = 'Select the namespace';
+$lang['exp_select_pages']                  = 'Select pages and media';
 
 $lang['imp_no_page_selected']     = 'No page selected!';
-$lang['imp_overwrite_pages']      = 'Overwrite existing pages';
+$lang['imp_overwrite_pages']      = 'Overwrite existing files';
 $lang['imp_page_already_exists']  = 'Import Skipped! Wiki page already exists (%s)';
 $lang['imp_page_summary']         = 'Imported by DokuWiki Advanced Plugin';
 $lang['imp_pages_import_success'] = 'Pages imported successfully!';
-$lang['imp_select_namespace']     = 'Select the Namespace for the import';
-$lang['imp_select_pages']         = 'Select the Pages for the import';
+$lang['imp_select_namespace']     = 'Select target namespace for the import';
+$lang['imp_select_pages']         = 'Select files for the import';
 $lang['imp_upload_backup']        = 'Upload backup file';
 $lang['imp_zip_extract_error']    = 'Error during archive export';
 $lang['imp_zip_not_found']        = 'Import archive not found';
