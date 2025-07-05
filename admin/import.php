@@ -87,6 +87,7 @@ class admin_plugin_advanced_import extends DokuWiki_Admin_Plugin
 
         global $INPUT;
         global $conf;
+        global $lang;
 
         $extract_dir     = io_mktmpdir();
         $archive_file    = $INPUT->str('file');
