@@ -1,0 +1,15 @@
+==== Manifesto de aplicativo da Web progressivo ====
+
+O DokuWiki envia um manifest.json, que permite aos usuários móveis adicionar o wiki como um aplicativo da web à tela inicial.
+
+Este manifest.json pode ser personalizado de várias maneiras:
+
+  - pode ser desativado adicionando ''manifest'' à opção de configuração "[[doku>config:disableactions]]"
+  - pode ser sobrescrito por valores definidos em ''manifest.local.json'' no diretório ''conf'' que será carregado de acordo com a cascata de configuração
+  - utiliza vários parâmetros configuráveis, se eles não forem sobrescritos pelo ponto acima: [[doku>config:title|config:title]], [[doku>config:tagline|config:tagline]], as substituições ''%%__background__%%'' e ''%%__theme_color__%%'' ou ''%%__background_alt__%%''
+  - se nenhum ícone for definido em um manifest.local.json, ele procura alguns logotipos SVG e usa o primeiro que encontrar: '':wiki:logo.svg'', '':logo.svg'' ou '':wiki:dokuwiki.svg''
+
+=== Veja também ===
+
+  * [[doku>devel:event:manifest_send|MANIFEST_SEND]]
+  * https://developer.mozilla.org/en-US/docs/Web/Manifest

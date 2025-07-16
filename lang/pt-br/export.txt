@@ -1,0 +1,3 @@
+====== Advanced: Utilitário de Exportação ======
+
+Use esta página para fazer backup de suas páginas do DokuWiki ou para importar (ou implantar) em outra instalação do DokuWiki usando o [[this>?do=admin&page=advanced_import|Utilitário de Importação]].

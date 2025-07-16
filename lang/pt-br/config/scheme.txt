@@ -1,0 +1,14 @@
+==== Esquemas de URL ====
+
+O DokuWiki permite links para URLs externos, mas apenas para protocolos conhecidos.
+
+=== Exemplo de scheme.conf ===
+
+<code>
+http
+https
+ftp
+</code>
+
+=== Veja também ===
+  * [[doku>urlschemes]]
